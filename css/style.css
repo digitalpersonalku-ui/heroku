@@ -315,37 +315,120 @@ body{font-family:var(--font-body,'Segoe UI',Arial,sans-serif);background:var(--b
 .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-70px);background:var(--dark);color:#fff;padding:9px 16px;border-radius:40px;font-size:12px;font-weight:700;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);z-index:9999;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;display:flex;align-items:center;gap:6px}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
-/* ═══════════════════════════════════════════════
-   TEMA VISUAL BERDASARKAN KELOMPOK USIA — TAHAP 1
-   (Fondasi dasar; akan diperluas penuh di Tahap 2)
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   TEMA VISUAL BERDASARKAN KELOMPOK USIA — TAHAP 2 (LENGKAP)
+   Strategi: override CSS variable per tema + sentuhan elemen kunci.
+   Tema MENENGAH = tampilan default (tidak perlu override apapun).
+   ═══════════════════════════════════════════════════════════ */
 
-/* Tema MUDA (6-8 tahun): warna ceria, ukuran elemen sedikit lebih besar */
-body.theme-muda {
-  --font-round: 'Varela Round', 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+/* ───────────────────────────────────────────
+   TEMA MUDA (6-8 tahun) — Ceria, besar, lembut
+   Warna pastel hangat, sudut sangat membulat,
+   ikon/tombol diperbesar untuk jari kecil.
+   ─────────────────────────────────────────── */
+body.theme-muda{
+  --green:#5FD68A;--green-dark:#3DBE6E;--green-light:#EFFCF3;
+  --amber:#FFB84D;--purple:#B388F0;--blue:#6CC3F5;--coral:#FF8A8A;
+  --dark:#3A3A5C;--bg:#FFF8EE;--border:#FFE4C4;
+  --font-round:'Varela Round','Comic Sans MS','Trebuchet MS',sans-serif;
 }
-body.theme-muda .hero-name { font-size: 22px; }
+body.theme-muda .card,
+body.theme-muda .habit-card,
+body.theme-muda .mentor-card{
+  border-radius:22px!important;
+  box-shadow:0 4px 14px rgba(255,184,77,0.18)!important;
+}
+body.theme-muda .hero{
+  border-radius:28px!important;
+  background:linear-gradient(135deg,#FF9A56,#FFCB6B)!important;
+}
+body.theme-muda .hero-name{font-size:24px!important;font-weight:900}
+body.theme-muda .hstat{border-radius:16px!important}
+body.theme-muda .hstat-num{font-size:24px!important}
+body.theme-muda .habit-card{padding:16px 18px!important;margin-bottom:10px!important}
+body.theme-muda .h-icon{width:52px!important;height:52px!important;font-size:28px!important;border-radius:18px!important}
+body.theme-muda .h-name{font-size:15px!important}
+body.theme-muda .hchk{width:32px!important;height:32px!important}
+body.theme-muda .btn-go,
+body.theme-muda .btn-confirm,
+body.theme-muda .btn-next{
+  border-radius:20px!important;font-size:16px!important;padding:16px!important;
+}
+body.theme-muda .nav-icon{font-size:24px!important}
+body.theme-muda .topbar-logo{font-size:22px!important}
+/* Animasi lembut "napas" pada kartu utama agar terasa hidup tanpa berlebihan */
+body.theme-muda .hero{animation:themeMudaBreathe 4s ease-in-out infinite}
+@keyframes themeMudaBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.008)}}
+body.theme-muda .mentor-av{font-size:26px!important}
 
-/* Tema MENENGAH (9-11 tahun): default saat ini, tidak ada perubahan signifikan */
-body.theme-menengah {
-  --font-round: 'Varela Round', 'Trebuchet MS', 'Segoe UI', sans-serif;
-}
+/* ───────────────────────────────────────────
+   TEMA MENENGAH (9-11 tahun) — Default
+   Tidak ada override; tampilan dasar yang sudah ada
+   sudah dirancang pas untuk rentang usia ini.
+   ─────────────────────────────────────────── */
 
-/* Tema DEWASA (12-15 tahun): warna lebih kalem, ukuran elemen sedikit lebih kompak,
-   font lebih tegas/formal agar terasa lebih "matang" untuk anak SMP */
-body.theme-dewasa {
-  --font-round: 'Segoe UI', Arial, sans-serif;
+/* ───────────────────────────────────────────
+   TEMA DEWASA (12-15 tahun) — Gamer/esports, bukan kantoran
+   Gelap dengan aksen neon, tipografi tegas, statistik
+   bergaya dashboard game (mirip Mobile Legends/Free Fire).
+   ─────────────────────────────────────────── */
+body.theme-dewasa{
+  --green:#00E5A0;--green-dark:#00C98A;--green-light:#0A2E26;
+  --amber:#FFB300;--purple:#A855F7;--blue:#3B9EFF;--coral:#FF4D6D;
+  --dark:#0A0E1A;--bg:#10131F;--border:#252B3D;
+  --text:#E8EAF0;--muted:#8B92A8;
+  --font-round:'Segoe UI','Rajdhani','Arial Narrow',Arial,sans-serif;
 }
-body.theme-dewasa .hero-name { font-size: 18px; }
-body.theme-dewasa .habit-card { border-radius: 10px; }
-body.theme-dewasa .hstat-num { font-size: 18px; }
-
-/* Selector tema (dipakai di halaman profil/pengaturan, dibangun penuh di Tahap 2) */
-.theme-choice-btn {
-  padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border);
-  background: #fff; cursor: pointer; font-size: 12px; font-weight: 700;
-  transition: all 0.2s;
+body.theme-dewasa{background:var(--bg)!important}
+body.theme-dewasa .topbar{background:#151929!important;border-bottom:1px solid #252B3D!important}
+body.theme-dewasa .topbar-name{color:#E8EAF0!important}
+body.theme-dewasa .topbar-sub{color:#8B92A8!important}
+body.theme-dewasa .bottom-nav{background:#151929!important;border-top:1px solid #252B3D!important}
+body.theme-dewasa .nav-label{color:#8B92A8!important}
+body.theme-dewasa .nav-item.active .nav-label{color:#00E5A0!important}
+body.theme-dewasa .card,
+body.theme-dewasa .habit-card,
+body.theme-dewasa .mentor-card{
+  background:#151929!important;border:1px solid #252B3D!important;
+  border-radius:10px!important;box-shadow:0 2px 12px rgba(0,229,160,0.06)!important;
+  color:#E8EAF0!important;
 }
-.theme-choice-btn.active {
-  border-color: var(--green); background: var(--green-light); color: var(--green-dark);
+body.theme-dewasa .hero{
+  background:linear-gradient(135deg,#0A0E1A,#151929)!important;
+  border:1px solid #252B3D!important;border-radius:12px!important;
+  box-shadow:0 0 24px rgba(0,229,160,0.12)!important;
+}
+body.theme-dewasa .hero-name{
+  font-family:var(--font-round)!important;font-size:17px!important;
+  font-weight:800!important;letter-spacing:0.3px!important;
+  text-transform:uppercase!important;
+}
+body.theme-dewasa .hero-greeting{color:#00E5A0!important;text-transform:none!important}
+body.theme-dewasa .hstat{
+  background:#0A0E1A!important;border:1px solid #252B3D!important;border-radius:8px!important;
+}
+body.theme-dewasa .hstat-num{
+  font-size:17px!important;color:#00E5A0!important;
+  font-family:var(--font-round)!important;font-weight:800!important;
+}
+body.theme-dewasa .hstat-label{color:#8B92A8!important;font-size:8px!important;letter-spacing:0.5px;text-transform:uppercase}
+body.theme-dewasa .xp-bar{background:#0A0E1A!important;border:1px solid #252B3D!important}
+body.theme-dewasa .xp-fill{background:linear-gradient(90deg,#00C98A,#00E5A0)!important;box-shadow:0 0 8px rgba(0,229,160,0.5)!important}
+body.theme-dewasa .habit-card{border-radius:8px!important}
+body.theme-dewasa .habit-card.checked{border-color:#00E5A0!important;background:#0A2E26!important}
+body.theme-dewasa .h-name{color:#E8EAF0!important;font-weight:700!important}
+body.theme-dewasa .h-desc{color:#8B92A8!important}
+body.theme-dewasa .hchk{border-color:#252B3D!important}
+body.theme-dewasa .habit-card.checked .hchk{background:#00E5A0!important;border-color:#00E5A0!important;color:#0A0E1A!important}
+body.theme-dewasa .mentor-msg{color:#E8EAF0!important}
+body.theme-dewasa .mentor-name{color:#00E5A0!important}
+body.theme-dewasa .mentor-sub{color:#8B92A8!important}
+body.theme-dewasa .sec-title{color:#E8EAF0!important;font-weight:700!important;text-transform:uppercase;font-size:12px!important;letter-spacing:0.5px}
+body.theme-dewasa .sday.empty{background:#0A0E1A!important;border-color:#252B3D!important;color:#8B92A8!important}
+body.theme-dewasa .sday.today{background:#151929!important;border-color:#00E5A0!important;color:#00E5A0!important}
+body.theme-dewasa .tier-pill{box-shadow:0 0 10px rgba(0,229,160,0.3)!important}
+/* Garis aksen neon tipis di tepi kartu utama, kesan dashboard game */
+body.theme-dewasa .hero::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#00E5A0,transparent);
 }
