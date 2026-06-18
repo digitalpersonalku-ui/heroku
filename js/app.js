@@ -1114,8 +1114,6 @@ function renderSchool(){
     <div style="font-size:10px;color:var(--muted)">${sorted.length} pembalap</div>
   </div>
 
-  <!-- DEMO NOTICE when all zero -->
-  ${demoSpread ? '<div style="background:#FFF8E7;border-radius:10px;padding:8px 12px;margin-bottom:8px;font-size:11px;color:#856404;text-align:center;border:1px solid #F9CA24">⚡ Posisi awal — Selesaikan misi harian untuk mobilmu bergerak maju!</div>' : ''}
   <!-- RACE TRACK SVG -->
   <div style="padding:12px;background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%)">
 
