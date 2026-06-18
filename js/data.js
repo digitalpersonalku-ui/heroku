@@ -301,6 +301,116 @@ function getAvailableThemeChoices(student){
   return ['dewasa']; // siswa dewasa hanya punya 1 tema (sudah yang paling dewasa)
 }
 
+// ══════════════════════════════════════════════════════════
+// SISTEM AVATAR — Ilustrasi karakter kartun semi-realistis
+// 12 karakter dengan variasi gender, warna kulit, rambut/jilbab.
+// 'avatar' di data siswa menyimpan ID (misal 'b1'), BUKAN emoji lagi.
+// Untuk kompatibilitas tempat yang sempit (di dalam SVG mobil kecil),
+// tetap sediakan versi emoji ringkas lewat getAvatarEmoji().
+// ══════════════════════════════════════════════════════════
+const AVATAR_CHARACTERS = {
+  // ── LAKI-LAKI (6 karakter) ──
+  b1: {label:'Rafi',     gender:'L', skin:'#F4C6A1', hair:'#3B2415', hairStyle:'short',    accessory:null,       emoji:'👦🏻'},
+  b2: {label:'Dimas',    gender:'L', skin:'#D89B6C', hair:'#1A1A1A', hairStyle:'spiky',    accessory:null,       emoji:'👦🏽'},
+  b3: {label:'Farhan',   gender:'L', skin:'#8B5A2B', hair:'#1A1A1A', hairStyle:'curly',    accessory:null,       emoji:'👦🏾'},
+  b4: {label:'Bagas',    gender:'L', skin:'#F4C6A1', hair:'#4A3221', hairStyle:'short',    accessory:'glasses',  emoji:'🧒🏻'},
+  b5: {label:'Yusuf',    gender:'L', skin:'#D89B6C', hair:'#2B1A0E', hairStyle:'side',     accessory:null,       emoji:'👦🏽'},
+  b6: {label:'Zaki',     gender:'L', skin:'#8B5A2B', hair:'#0D0D0D', hairStyle:'spiky',    accessory:'cap',      emoji:'🧒🏾'},
+  // ── PEREMPUAN (6 karakter) ──
+  g1: {label:'Aisyah',   gender:'P', skin:'#F4C6A1', hair:'#3B2415', hairStyle:'hijab',    hijabColor:'#5FA8D3', emoji:'👧🏻'},
+  g2: {label:'Putri',    gender:'P', skin:'#D89B6C', hair:'#1A1A1A', hairStyle:'hijab',    hijabColor:'#E8869C', emoji:'👧🏽'},
+  g3: {label:'Khalisa',  gender:'P', skin:'#8B5A2B', hair:'#1A1A1A', hairStyle:'hijab',    hijabColor:'#7FB069', emoji:'👧🏾'},
+  g4: {label:'Sari',     gender:'P', skin:'#F4C6A1', hair:'#4A2C12', hairStyle:'ponytail', accessory:null,       emoji:'👧🏻'},
+  g5: {label:'Maya',     gender:'P', skin:'#D89B6C', hair:'#2B1A0E', hairStyle:'twintail', accessory:null,       emoji:'👧🏽'},
+  g6: {label:'Nadia',    gender:'P', skin:'#8B5A2B', hair:'#0D0D0D', hairStyle:'wavy',     accessory:'glasses',  emoji:'🧒🏾'},
+};
+const AVATAR_IDS = Object.keys(AVATAR_CHARACTERS);
+
+// Fallback emoji ringkas — dipakai di tempat yang sangat sempit (mis. SVG mobil mini)
+function getAvatarEmoji(avatarId){
+  const resolved = resolveAvatarId(avatarId);
+  const c = AVATAR_CHARACTERS[resolved];
+  return c ? c.emoji : '🧒';
+}
+
+// Pemetaan avatar emoji LAMA -> karakter baru, untuk siswa yang datanya
+// sudah tersimpan di database sebelum sistem avatar SVG ini ada.
+// Supaya tidak ada siswa yang tiba-tiba "kehilangan" avatarnya saat update.
+const LEGACY_AVATAR_MAP = {
+  '🦁':'b2', '🌙':'g1', '⚡':'b6', '🌟':'g4',
+  '🏆':'b1', '🦋':'g5', '🐯':'b3', '🌸':'g2',
+  '🦅':'b5', '🌿':'g3', '🦊':'b4', '🐬':'g6',
+};
+
+// Resolusi ID avatar final: kalau masih emoji lama, petakan dulu ke karakter baru.
+function resolveAvatarId(avatarValue){
+  if(AVATAR_CHARACTERS[avatarValue]) return avatarValue; // sudah ID baru
+  if(LEGACY_AVATAR_MAP[avatarValue]) return LEGACY_AVATAR_MAP[avatarValue]; // emoji lama, petakan
+  return 'b1'; // fallback aman
+}
+
+// Generator SVG karakter penuh. size = lebar/tinggi kotak SVG (persegi).
+function getAvatarSVG(avatarId, size){
+  size = size || 64;
+  avatarId = resolveAvatarId(avatarId);
+  const c = AVATAR_CHARACTERS[avatarId];
+  if(!c) return `<svg viewBox="0 0 64 64" width="${size}" height="${size}"><circle cx="32" cy="32" r="28" fill="#DDD"/></svg>`;
+
+  let hairSVG = '';
+  if(c.hairStyle === 'short'){
+    hairSVG = `<path d="M13 24 Q13 6 32 6 Q51 6 51 24 L51 22 Q51 11 32 11 Q13 11 13 22 Z" fill="${c.hair}"/>`;
+  } else if(c.hairStyle === 'spiky'){
+    hairSVG = `<path d="M13 22 L16 8 L21 18 L26 4 L32 16 L38 4 L43 18 L48 8 L51 22 Q51 13 32 13 Q13 13 13 22Z" fill="${c.hair}"/>`;
+  } else if(c.hairStyle === 'curly'){
+    hairSVG = `<g fill="${c.hair}"><circle cx="17" cy="20" r="7.5"/><circle cx="26" cy="11" r="8.5"/><circle cx="38" cy="11" r="8.5"/><circle cx="47" cy="20" r="7.5"/><circle cx="32" cy="8" r="8"/><circle cx="21" cy="15" r="6"/><circle cx="43" cy="15" r="6"/></g>`;
+  } else if(c.hairStyle === 'side'){
+    hairSVG = `<path d="M13 23 Q13 5 33 5 Q51 5 51 20 Q51 12 38 12 Q44 16 40 19 Q30 14 22 18 Q15 21 13 23Z" fill="${c.hair}"/>`;
+  } else if(c.hairStyle === 'ponytail'){
+    hairSVG = `<path d="M13 24 Q13 6 32 6 Q51 6 51 24 L51 22 Q51 11 32 11 Q13 11 13 22 Z" fill="${c.hair}"/>
+      <path d="M46 22 Q60 24 58 40 Q56 50 50 47 Q53 38 47 26Z" fill="${c.hair}"/>`;
+  } else if(c.hairStyle === 'twintail'){
+    hairSVG = `<path d="M13 24 Q13 6 32 6 Q51 6 51 24 L51 22 Q51 11 32 11 Q13 11 13 22 Z" fill="${c.hair}"/>
+      <ellipse cx="11" cy="32" rx="5.5" ry="13" fill="${c.hair}" transform="rotate(-15 11 32)"/>
+      <ellipse cx="53" cy="32" rx="5.5" ry="13" fill="${c.hair}" transform="rotate(15 53 32)"/>`;
+  } else if(c.hairStyle === 'wavy'){
+    hairSVG = `<path d="M12 26 Q9 6 32 5 Q55 6 52 26 Q50 14 46 24 Q44 10 39 22 Q36 9 32 21 Q28 9 25 22 Q20 10 18 24 Q14 14 12 26Z" fill="${c.hair}"/>`;
+  } else if(c.hairStyle === 'hijab'){
+    hairSVG = `<path d="M9 32 Q7 4 32 3 Q57 4 55 32 Q55 44 50 52 Q48 44 46 38 Q47 24 32 22 Q17 24 18 38 Q16 44 14 52 Q9 44 9 32Z" fill="${c.hijabColor}"/>
+      <path d="M44 38 Q46 46 50 52 L46 54 Q42 48 41 40Z" fill="${c.hijabColor}" opacity="0.85"/>
+      <path d="M20 38 Q18 46 14 52 L18 54 Q22 48 23 40Z" fill="${c.hijabColor}" opacity="0.85"/>`;
+  }
+
+  const accessorySVG = c.accessory === 'glasses'
+    ? `<g stroke="#333" stroke-width="1.5" fill="rgba(255,255,255,0.25)"><circle cx="24" cy="35" r="6"/><circle cx="40" cy="35" r="6"/><line x1="30" y1="35" x2="34" y2="35"/></g>`
+    : c.accessory === 'cap'
+    ? `<path d="M12 21 Q12 3 32 3 Q52 3 52 21 Q52 12 32 12 Q12 12 12 19Z" fill="#3498DB"/><path d="M44 17 Q54 17 54 23 Q54 27 46 26 Z" fill="#2980B9"/>`
+    : '';
+
+  const isHijab = c.hairStyle === 'hijab';
+
+  return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+    <!-- Wajah -->
+    <ellipse cx="32" cy="36" rx="18" ry="19" fill="${c.skin}"/>
+    <!-- Pipi blush -->
+    <ellipse cx="20" cy="40" rx="3.5" ry="2.5" fill="#FF9B9B" opacity="0.4"/>
+    <ellipse cx="44" cy="40" rx="3.5" ry="2.5" fill="#FF9B9B" opacity="0.4"/>
+    <!-- Mata besar khas kartun -->
+    <ellipse cx="24" cy="35" rx="3.2" ry="4.2" fill="#2B1A0E"/>
+    <ellipse cx="40" cy="35" rx="3.2" ry="4.2" fill="#2B1A0E"/>
+    <circle cx="25" cy="33.5" r="1" fill="#fff"/>
+    <circle cx="41" cy="33.5" r="1" fill="#fff"/>
+    <!-- Alis -->
+    <path d="M20 29 Q24 27 28 29" stroke="${c.hair}" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M36 29 Q40 27 44 29" stroke="${c.hair}" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Senyum -->
+    <path d="M27 45 Q32 49 37 45" stroke="#A0522D" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <!-- Rambut/Hijab (di belakang & depan wajah sebagian) -->
+    ${isHijab ? '' : hairSVG}
+    ${isHijab ? hairSVG : ''}
+    ${accessorySVG}
+  </svg>`;
+}
+
 
 const DEFAULT_STAFF = [
   {id:'guru01', name:'Reski Wulandari, S.Pd.',        role:'guru',   kelas:'Usman Bin Affan',    password:'guru01',     avatar:'👩‍🏫'},

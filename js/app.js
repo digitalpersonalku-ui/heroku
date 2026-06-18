@@ -226,7 +226,7 @@ function renderApp(){
   const u=CU, first=u.name.split(' ')[0];
   applyAgeThemeClass();
   const tier=getTier(u.koin);
-  document.getElementById('topbar-av').textContent=u.avatar;
+  document.getElementById('topbar-av').innerHTML=getAvatarSVG(u.avatar, 28);
   document.getElementById('topbar-name').textContent=first;
   document.getElementById('topbar-sub').textContent=CRole==='anak'?'Level '+u.level:CRole;
   const tp=document.getElementById('topbar-tier');
@@ -597,7 +597,7 @@ function renderWorld(){
       <!-- Headlights -->
       <rect x="13" y="-10" width="5" height="6" rx="2" fill="${isDark?'#FFE066':'rgba(255,230,0,0.7)'}"/>
       <!-- Avatar + stickers -->
-      <text x="0" y="-12" text-anchor="middle" font-size="13">${u.avatar}</text>
+      <text x="0" y="-12" text-anchor="middle" font-size="13">${getAvatarEmoji(u.avatar)}</text>
       ${activeStickers?`<text x="14" y="-18" font-size="9">${activeStickers}</text>`:''}
       <!-- Motion lines -->
       ${totalKoin>0?`
@@ -684,7 +684,7 @@ function renderOrtu(){
   const tier = getTier(u.koin);
   const verified = u.verifiedToday || {};
 
-  document.getElementById('ortu-av').textContent = u.avatar;
+  document.getElementById('ortu-av').innerHTML = getAvatarSVG(u.avatar, 46);
   document.getElementById('ortu-name').textContent = u.name;
   document.getElementById('ortu-sub').textContent =
     'Kelas '+u.kelas+(u.age?' · Usia '+u.age+' tahun':'')+' · Level '+u.level+' · Tier '+tier.icon+' '+tier.name;
@@ -839,7 +839,7 @@ function renderGarasi(){
         </div>
         ${hasSpoiler ? '<div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:16px">🏁</div>' : ''}
         ${activeStickers ? `<div style="position:absolute;top:0;right:-10px;font-size:14px;line-height:1.4">${activeStickers}</div>` : ''}
-        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px">${u.avatar} ${u.nickname||u.name.split(' ')[0]}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px">${getAvatarEmoji(u.avatar)} ${u.nickname||u.name.split(' ')[0]}</div>
       </div>`;
   }
   const nameEl = document.getElementById('garasi-car-name');
@@ -1050,7 +1050,7 @@ function renderSertifikat(){
       cursor:pointer;transition:all 0.2s;background:#fff" 
       onmouseover="this.style.borderColor='var(--green)';this.style.background='var(--green-light)'"
       onmouseout="this.style.borderColor='var(--border)';this.style.background='#fff'">
-      <div style="font-size:28px">${s.avatar}</div>
+      <div style="width:36px;height:36px">${getAvatarSVG(s.avatar, 36)}</div>
       <div style="flex:1">
         <div style="font-family:var(--font-round);font-size:13px;font-weight:800">${s.name}</div>
         <div style="font-size:10px;color:var(--muted)">${s.kelas}</div>
@@ -1081,7 +1081,7 @@ function previewSertifikat(studentId){
   document.getElementById('sert-reason').textContent = reason;
   document.getElementById('sert-date').textContent = today;
   document.getElementById('sert-tier').textContent = tier.icon + ' Tier ' + tier.name;
-  document.getElementById('sert-avatar').textContent = s.avatar;
+  document.getElementById('sert-avatar').innerHTML = getAvatarSVG(s.avatar, 48);
   overlay.style.display = 'flex';
 }
 
@@ -1224,7 +1224,7 @@ function renderSchool(){
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
             <div style="font-size:11px;font-weight:900;color:rgba(255,255,255,0.4);
               width:16px;text-align:center">${rankIcon||rank}</div>
-            <div style="font-size:16px">${s.avatar}</div>
+            <div style="width:20px;height:20px">${getAvatarSVG(s.avatar, 20)}</div>
             <div style="flex:1">
               <div style="font-family:var(--font-round);font-size:11px;font-weight:800;
                 color:${isMe?'#52D98A':'rgba(255,255,255,0.85)'}">${nickname}${isMe?' (Kamu)':''}</div>
@@ -1278,8 +1278,7 @@ function renderSchool(){
               </svg>
 
               <!-- Avatar + stickers on car -->
-              <div style="position:absolute;top:-14px;left:8px;font-size:12px
-                ;line-height:1">${s.avatar}${mods.stickers}</div>
+              <div style="position:absolute;top:-16px;left:6px;width:16px;height:16px;line-height:1">${getAvatarSVG(s.avatar, 16)}${mods.stickers}</div>
             </div>
 
             <!-- Exhaust puffs animation if active today -->
@@ -1306,6 +1305,7 @@ function renderSchool(){
 
 function renderAdmin(){
   document.getElementById('stu-count').textContent=STORE.students.length;
+  renderAvatarPicker();
   const cf=document.getElementById('class-filter');
   cf.innerHTML=`<div class="cls-chip ${adminFilter==='all'?'active':''}" onclick="setFilter('all')">Semua</div>`;
   CLASSES.forEach(c=>{cf.innerHTML+=`<div class="cls-chip ${adminFilter===c?'active':''}" onclick="setFilter('${c}')">${c.split(' ')[0]}</div>`});
@@ -1317,7 +1317,7 @@ function renderAdmin(){
     const done=Object.keys(s.checkedToday||{}).length;
     const div=document.createElement('div');
     div.className='student-row';
-    div.innerHTML=`<div class="sr-av" style="background:#F0F0F0">${s.avatar}</div>
+    div.innerHTML=`<div class="sr-av" style="background:#F0F0F0">${getAvatarSVG(s.avatar, 34)}</div>
       <div class="sr-info"><div class="sr-name">${s.name}</div><div class="sr-sub">Kelas ${s.kelas} · Panggilan: ${s.nickname||'-'} · Usia: ${s.age||'-'} thn · ${done}/7 hari ini</div></div>
       <div style="text-align:right;flex-shrink:0"><div class="sr-pin">PIN: ${s.pin}</div></div>
       <button class="btn-del" onclick="delStudent('${s.id}')">🗑️</button>`;
@@ -1326,6 +1326,27 @@ function renderAdmin(){
 }
 
 function setFilter(f){adminFilter=f;renderAdmin()}
+
+// Render galeri pilihan avatar di form Tambah Siswa (Admin)
+function renderAvatarPicker(){
+  const grid = document.getElementById('avatar-picker-grid');
+  if(!grid) return;
+  const selected = document.getElementById('add-av')?.value || 'b1';
+  grid.innerHTML = AVATAR_IDS.map(id => {
+    const isSelected = id === selected;
+    return `<div onclick="selectAvatarOption('${id}')"
+      style="cursor:pointer;border-radius:8px;padding:3px;border:2px solid ${isSelected?'var(--green)':'transparent'};
+      background:${isSelected?'var(--green-light)':'#FAFAFA'};text-align:center;transition:all 0.15s">
+      ${getAvatarSVG(id, 32)}
+    </div>`;
+  }).join('');
+}
+
+function selectAvatarOption(id){
+  const input = document.getElementById('add-av');
+  if(input) input.value = id;
+  renderAvatarPicker();
+}
 
 function autoFillNickname(){
   const nameEl = document.getElementById('add-name');
@@ -1351,7 +1372,7 @@ function toggleBulkMode(){
   if(btn) btn.textContent = isBulk ? '📋 Import Massal' : '👤 Tambah Satu';
 }
 
-const AVATARS = ['🦁','🌙','⚡','🌟','🏆','🦋','🐯','🌸','🦅','🌿','🦊','🐬'];
+const AVATARS = AVATAR_IDS; // 12 karakter ilustrasi (b1-b6, g1-g6), bukan emoji lagi
 
 function bulkAddStudents(){
   const text = document.getElementById('bulk-text');
@@ -1747,16 +1768,17 @@ function renderRaceTrack(){
   const myRank = myStudent ? sorted.indexOf(myStudent)+1 : 0;
 
   // Car colors from garage
-  const defaultColors={'🦁':'#F39C12','🌙':'#9B59B6','⚡':'#E74C3C','🌟':'#F1C40F',
-    '🏆':'#27AE60','🦋':'#E91E8C','🐯':'#E67E22','🌸':'#FF69B4',
-    '🦅':'#2980B9','🌿':'#1ABC9C','🦊':'#D35400','🐬':'#16A085'};
+  const defaultColors={b1:'#F39C12',b2:'#9B59B6',b3:'#E74C3C',b4:'#F1C40F',
+    b5:'#27AE60',b6:'#2980B9',g1:'#E91E8C',g2:'#FF69B4',
+    g3:'#1ABC9C',g4:'#D35400',g5:'#16A085',g6:'#8E44AD'};
   const colorMap={'default':'#F39C12','green':'#27AE60','white':'#BDC3C7',
     'blue':'#2980B9','gold':'#F1C40F','purple':'#8E44AD','red':'#E74C3C','teal':'#1ABC9C'};
 
   function getCarColor(s){
+    const avId = resolveAvatarId(s.avatar);
     const g=s.garage;
-    if(g&&g.colorId&&g.colorId!=='default') return colorMap[g.colorId]||defaultColors[s.avatar]||'#888';
-    return defaultColors[s.avatar]||'#888';
+    if(g&&g.colorId&&g.colorId!=='default') return colorMap[g.colorId]||defaultColors[avId]||'#888';
+    return defaultColors[avId]||'#888';
   }
   function getMods(s){
     const g=s.garage||{};
@@ -1852,7 +1874,7 @@ function renderRaceTrack(){
         <!-- Headlights -->
         <rect x="13" y="6" width="4" height="5" rx="1.5" fill="#FFE066" opacity="0.9"/>
         <!-- Avatar -->
-        <text x="0" y="3" text-anchor="middle" font-size="10">${s.avatar}${mods.stickers}</text>
+        <text x="0" y="3" text-anchor="middle" font-size="10">${getAvatarEmoji(s.avatar)}${mods.stickers}</text>
       </g>
 
       <!-- Progress dots -->
