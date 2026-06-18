@@ -1073,6 +1073,224 @@ function sendSchoolNotif(){
   showToast('📨 Pesan terkirim ke '+count+' orang tua!');
 }
 
+// ══════════════════════════════════════════════════════════
+// SOAL KELAS — Guru membuat & mengelola soal untuk kelasnya
+// ══════════════════════════════════════════════════════════
+const QUIZ_CATEGORY_LABELS = {
+  agama:'🕌 Agama Islam', math:'🔢 Matematika', english:'🗣️ Bahasa Inggris',
+  sains:'🔬 Sains', sejarah:'🌍 Sejarah Islam',
+};
+const AGE_GROUP_LABELS = { muda:'🧸 6-8 thn', menengah:'🎈 9-11 thn', dewasa:'🎯 12-15 thn' };
+
+async function initSoalGuru(){
+  if(CRole !== 'guru') return;
+  const sub = document.getElementById('soalguru-subtitle');
+  if(sub) sub.textContent = 'Soal untuk kelas ' + (CU.kelas || '-') + ' — hanya terlihat oleh siswamu';
+  await renderSoalGuruList();
+}
+
+async function renderSoalGuruList(){
+  const list = document.getElementById('soalguru-list');
+  if(!list) return;
+  list.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Memuat soal...</div>';
+
+  const quizzes = await loadTeacherQuizzesByTeacher(CU.id);
+  if(!quizzes.length){
+    list.innerHTML = '<div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">Belum ada soal yang kamu buat.<br>Tulis soal pertamamu di atas!</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  for(const q of quizzes){
+    const attempts = await loadQuizAttempts(q.id);
+    const correctCount = attempts.filter(a=>a.is_correct).length;
+    const div = document.createElement('div');
+    div.style.cssText = 'border:1.5px solid var(--border);border-radius:11px;padding:10px;margin-bottom:8px;background:#fff';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
+        <div style="font-size:11px;font-weight:700;color:var(--green-dark)">${QUIZ_CATEGORY_LABELS[q.category]||q.category} · ${AGE_GROUP_LABELS[q.ageGroup]||q.ageGroup}</div>
+        <button onclick="removeTeacherQuiz(${q.id})" style="background:none;border:none;cursor:pointer;font-size:13px;opacity:0.5">🗑️</button>
+      </div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:4px">${q.question}</div>
+      <div style="font-size:10px;color:var(--muted)">
+        ✅ ${attempts.length} siswa sudah coba · ${correctCount} jawab benar
+      </div>`;
+    list.appendChild(div);
+  }
+}
+
+async function submitTeacherQuiz(){
+  const question = document.getElementById('sg-question').value.trim();
+  const optA = document.getElementById('sg-opt-a').value.trim();
+  const optB = document.getElementById('sg-opt-b').value.trim();
+  const optC = document.getElementById('sg-opt-c').value.trim();
+  const optD = document.getElementById('sg-opt-d').value.trim();
+  const statusEl = document.getElementById('sg-save-status');
+
+  if(!question || !optA || !optB || !optC || !optD){
+    statusEl.innerHTML = '<span style="color:#E74C3C">⚠️ Lengkapi pertanyaan dan semua pilihan jawaban dulu.</span>';
+    return;
+  }
+
+  const quizData = {
+    teacherId: CU.id,
+    kelas: CU.kelas,
+    category: document.getElementById('sg-category').value,
+    ageGroup: document.getElementById('sg-agegroup').value,
+    question, options: [optA, optB, optC, optD],
+    correctAnswer: parseInt(document.getElementById('sg-correct').value),
+    bonusKoin: 20,
+  };
+
+  statusEl.innerHTML = '<span style="color:var(--muted)">Menyimpan...</span>';
+  const result = await saveTeacherQuiz(quizData);
+  if(result){
+    statusEl.innerHTML = '<span style="color:var(--green-dark)">✅ Soal berhasil disimpan!</span>';
+    document.getElementById('sg-question').value = '';
+    document.getElementById('sg-opt-a').value = '';
+    document.getElementById('sg-opt-b').value = '';
+    document.getElementById('sg-opt-c').value = '';
+    document.getElementById('sg-opt-d').value = '';
+    showToast('📝 Soal baru tersimpan untuk kelas ' + CU.kelas + '!');
+    renderSoalGuruList();
+  } else {
+    statusEl.innerHTML = '<span style="color:#E74C3C">❌ Gagal menyimpan. Cek koneksi database.</span>';
+  }
+}
+
+async function removeTeacherQuiz(quizId){
+  if(!window.confirm('Hapus soal ini? Siswa tidak akan bisa menjawabnya lagi.')) return;
+  const ok = await deleteTeacherQuiz(quizId);
+  if(ok){ showToast('🗑️ Soal dihapus.'); renderSoalGuruList(); }
+  else showToast('❌ Gagal menghapus soal.');
+}
+
+// ══════════════════════════════════════════════════════════
+// PAPAN TANTANGAN — Siswa pilih topik, jawab soal dari guru kelasnya
+// ══════════════════════════════════════════════════════════
+const TANTANGAN_TOPICS = [
+  {key:'agama',   icon:'🕌', label:'Agama Islam',     color:'#8E44AD', bg:'#F5EEF8'},
+  {key:'math',    icon:'🔢', label:'Matematika',       color:'#2980B9', bg:'#EBF5FB'},
+  {key:'english', icon:'🗣️', label:'Bahasa Inggris',   color:'#E91E8C', bg:'#FBEAF0'},
+  {key:'sains',   icon:'🔬', label:'Sains',            color:'#27AE60', bg:'#EAF9F0'},
+  {key:'sejarah', icon:'🌍', label:'Sejarah Islam',    color:'#E67E22', bg:'#FDF2E9'},
+];
+
+let _tantanganQuizCache = [];
+
+async function initTantangan(){
+  if(CRole !== 'anak' || !CU) return;
+  const sub = document.getElementById('tantangan-subtitle');
+  if(sub) sub.textContent = 'Soal dari guru kelas ' + (CU.kelas||'-') + ' — pilih topik untuk mulai';
+  document.getElementById('tantangan-quiz-area').style.display = 'none';
+  document.getElementById('tantangan-gallery').style.display = 'block';
+
+  _tantanganQuizCache = await loadTeacherQuizzes(CU.kelas);
+  renderTantanganGallery();
+}
+
+function renderTantanganGallery(){
+  const gallery = document.getElementById('tantangan-gallery');
+  if(!gallery) return;
+  const myGroup = getActiveThemeGroup(CU);
+
+  gallery.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">` +
+    TANTANGAN_TOPICS.map(t => {
+      const available = _tantanganQuizCache.filter(q => q.category===t.key && q.ageGroup===myGroup);
+      const count = available.length;
+      const disabled = count === 0;
+      return `<div class="tantangan-topic-card" data-topic-key="${t.key}" data-disabled="${disabled}"
+        style="background:${t.bg};border-radius:14px;padding:16px;text-align:center;
+        cursor:${disabled?'default':'pointer'};opacity:${disabled?'0.45':'1'};
+        border:1.5px solid ${t.color}30;transition:transform 0.15s">
+        <div style="font-size:34px;margin-bottom:6px">${t.icon}</div>
+        <div style="font-family:var(--font-round);font-size:12px;font-weight:800;color:${t.color}">${t.label}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${disabled?'Belum ada soal':count+' soal tersedia'}</div>
+      </div>`;
+    }).join('') + `</div>
+    ${_tantanganQuizCache.length===0?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;margin-top:10px">
+      Gurumu belum membuat soal untuk kelasmu.<br>Coba cek lagi nanti ya!</div>`:''}`;
+
+  // Bind klik via event delegation (hindari masalah escape kutip di inline onclick)
+  gallery.querySelectorAll('.tantangan-topic-card').forEach(card => {
+    const isDisabled = card.getAttribute('data-disabled') === 'true';
+    if(isDisabled) return;
+    card.addEventListener('click', () => openTantanganTopic(card.getAttribute('data-topic-key')));
+    card.addEventListener('mouseover', () => { card.style.transform = 'scale(1.03)'; });
+    card.addEventListener('mouseout', () => { card.style.transform = 'scale(1)'; });
+  });
+}
+
+let _currentTantanganQuiz = null;
+
+function openTantanganTopic(category){
+  const myGroup = getActiveThemeGroup(CU);
+  const pool = _tantanganQuizCache.filter(q => q.category===category && q.ageGroup===myGroup);
+  if(!pool.length){ showToast('⚠️ Belum ada soal di topik ini.'); return; }
+  _currentTantanganQuiz = pool[Math.floor(Math.random()*pool.length)];
+
+  document.getElementById('tantangan-gallery').style.display = 'none';
+  const area = document.getElementById('tantangan-quiz-area');
+  area.style.display = 'block';
+
+  const topic = TANTANGAN_TOPICS.find(t=>t.key===category);
+  area.innerHTML = `
+    <div class="card">
+      <button onclick="initTantangan()" style="background:none;border:none;cursor:pointer;
+        font-size:11px;color:var(--muted);margin-bottom:10px">← Kembali ke topik</button>
+      <div style="text-align:center;margin-bottom:12px">
+        <div style="font-size:36px">${topic.icon}</div>
+        <div style="font-family:var(--font-round);font-size:13px;font-weight:800;color:${topic.color}">${topic.label}</div>
+      </div>
+      <div style="font-size:14px;font-weight:700;text-align:center;margin-bottom:16px;line-height:1.5">${_currentTantanganQuiz.question}</div>
+      <div id="tantangan-opts" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div id="tantangan-result" style="text-align:center;margin-top:12px;font-size:13px;font-weight:800"></div>
+    </div>`;
+
+  const optsEl = document.getElementById('tantangan-opts');
+  const letters = ['A','B','C','D'];
+  _currentTantanganQuiz.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.style.cssText = `padding:12px;border:1.5px solid var(--border);border-radius:10px;
+      background:#fff;cursor:pointer;font-size:12px;text-align:left;font-family:var(--font-body)`;
+    btn.innerHTML = `<strong>${letters[i]}.</strong> ${opt}`;
+    btn.onclick = () => answerTantanganQuiz(i, btn);
+    optsEl.appendChild(btn);
+  });
+}
+
+async function answerTantanganQuiz(selectedIdx, btnEl){
+  const q = _currentTantanganQuiz;
+  if(!q) return;
+  const allBtns = document.querySelectorAll('#tantangan-opts button');
+  allBtns.forEach(b => b.disabled = true);
+
+  const isCorrect = selectedIdx === q.correctAnswer;
+  const letters = ['A','B','C','D'];
+  allBtns[q.correctAnswer].style.borderColor = 'var(--green)';
+  allBtns[q.correctAnswer].style.background = 'var(--green-light)';
+  if(!isCorrect){ btnEl.style.borderColor = '#E74C3C'; btnEl.style.background = '#FDEDEC'; }
+
+  const resultEl = document.getElementById('tantangan-result');
+  if(isCorrect){
+    resultEl.innerHTML = `<span style="color:var(--green-dark)">🎉 Benar! +${q.bonusKoin} Koin</span>`;
+    CU.koin += q.bonusKoin;
+    saveCU(); updateStats();
+  } else {
+    resultEl.innerHTML = `<span style="color:#E74C3C">Jawaban benar: ${letters[q.correctAnswer]}. ${q.options[q.correctAnswer]}</span>`;
+  }
+
+  await recordQuizAttempt(q.id, CU.id, isCorrect);
+
+  setTimeout(() => {
+    const area = document.getElementById('tantangan-quiz-area');
+    area.innerHTML += `<button onclick="initTantangan()" style="width:100%;margin-top:10px;
+      padding:11px;background:var(--green);border:none;border-radius:10px;color:#fff;
+      font-family:var(--font-round);font-weight:800;font-size:13px;cursor:pointer">
+      Pilih Topik Lain →</button>`;
+  }, 600);
+}
+
 function renderSchool(){
   const ss = STORE.students;
   const active = ss.filter(s=>Object.keys(s.checkedToday||{}).length>0).length;
@@ -1691,6 +1909,8 @@ function switchPage(page){
   if(page==='garasi')renderGarasi();
   if(page==='race')setTimeout(()=>renderRaceTrack(),50);
   if(page==='psikologi')setTimeout(()=>initPsikologi(),50);
+  if(page==='tantangan')setTimeout(()=>initTantangan(),50);
+  if(page==='soalguru')setTimeout(()=>initSoalGuru(),50);
   if(page==='tentang'){}
 }
 
@@ -2196,10 +2416,11 @@ function renderPsikologi(studentOverride){
 // ── ROLE-BASED NAV ──
 const NAV_CONFIGS = {
   anak: [
-    {id:'beranda', icon:'🏠', label:'Beranda'},
-    {id:'dunia',   icon:'🗺️', label:'Duniaku'},
-    {id:'race',    icon:'🏁', label:'Balapan'},
-    {id:'garasi',  icon:'🏎️', label:'Garasi'},
+    {id:'beranda',   icon:'🏠', label:'Beranda'},
+    {id:'dunia',     icon:'🗺️', label:'Duniaku'},
+    {id:'tantangan', icon:'🎯', label:'Tantangan'},
+    {id:'race',      icon:'🏁', label:'Balapan'},
+    {id:'garasi',    icon:'🏎️', label:'Garasi'},
   ],
   ortu: [
     {id:'ortu',     icon:'📊', label:'Laporan'},
@@ -2208,6 +2429,7 @@ const NAV_CONFIGS = {
   ],
   guru: [
     {id:'sekolah',  icon:'🏫', label:'Kelas'},
+    {id:'soalguru', icon:'📝', label:'Soal Kelas'},
     {id:'psikologi',icon:'🧠', label:'Profil Siswa'},
     {id:'admin',    icon:'👥', label:'Manajemen'},
   ],
