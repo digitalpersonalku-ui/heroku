@@ -155,18 +155,55 @@ const COLLECT_CARDS = [
   {id:'c9',icon:'🏆',name:'Juara Karakter',rarity:'Legendaris',quote:'Sesungguhnya yang paling mulia di antara kamu adalah yang paling bertakwa.',grad:'linear-gradient(135deg,#E91E8C,#880E4F)',koinReq:500},
 ];
 
+// ══ KUIS — bertingkat berdasarkan kelompok usia, 5 kategori ══
+// ageGroup: array kelompok yang cocok untuk soal ini ('muda'/'menengah'/'dewasa')
+// type: 'agama' | 'english' | 'math' | 'sains' | 'sejarah'
 const QUIZZES = [
-  {q:'Apa arti "Shalat" dalam bahasa Arab?',sub:'Pilih jawaban yang benar!',opts:['Doa','Puasa','Zakat','Haji'],ans:0,type:'agama',bonus:20},
-  {q:'How do you say "Selamat Pagi" in English?',sub:'Terjemahkan ke Bahasa Inggris!',opts:['Good Night','Good Afternoon','Good Morning','Good Evening'],ans:2,type:'english',bonus:20},
-  {q:'Berapa hasil dari 7 × 8?',sub:'Hitung dengan cepat!',opts:['54','56','58','62'],ans:1,type:'math',bonus:15},
-  {q:'Surat apakah yang disebut "Ummul Quran"?',sub:'Pengetahuan Al-Quran',opts:['Al-Baqarah','Al-Fatihah','Al-Ikhlas','An-Nas'],ans:1,type:'agama',bonus:20},
-  {q:'Sambungkan ayat: "Bismillahirrahmanir..."',sub:'Hafalan ayat',opts:["Rahim","Karim","Aziz","Jabbar"],ans:0,type:'agama',bonus:25},
-  {q:'What is the English word for "Kucing"?',sub:'Terjemahkan ke Bahasa Inggris!',opts:['Dog','Bird','Cat','Fish'],ans:2,type:'english',bonus:15},
-  {q:'Berapa hasil dari 12 × 9?',sub:'Hitung dengan cepat!',opts:['98','106','108','112'],ans:2,type:'math',bonus:20},
-  {q:'Siapakah Nabi pertama dalam Islam?',sub:'Pengetahuan Agama Islam',opts:['Nabi Isa','Nabi Adam','Nabi Ibrahim','Nabi Musa'],ans:1,type:'agama',bonus:20},
-  {q:'How do you say "Terima Kasih" in English?',sub:'Terjemahkan!',opts:['Sorry','Please','Thank You','Excuse Me'],ans:2,type:'english',bonus:15},
-  {q:'Berapa jumlah rakaat shalat Dzuhur?',sub:'Fiqih Dasar',opts:['2','3','4','5'],ans:2,type:'agama',bonus:20},
+  // ═══ KELOMPOK MUDA (6-8 tahun) — sangat sederhana, visual, 1 langkah ═══
+  {q:'Apa warna langit di siang hari?',sub:'Pilih jawaban yang benar!',opts:['Hijau','Biru','Merah','Ungu'],ans:1,type:'sains',bonus:15,ageGroup:['muda']},
+  {q:'Berapa hasil dari 2 + 3?',sub:'Hitung dengan jarimu!',opts:['4','5','6','7'],ans:1,type:'math',bonus:10,ageGroup:['muda']},
+  {q:'Apa arti "Bismillah"?',sub:'Pengetahuan Agama',opts:['Dengan nama Allah','Selamat pagi','Terima kasih','Maaf'],ans:0,type:'agama',bonus:15,ageGroup:['muda']},
+  {q:'How do you say "Kucing" in English?',sub:'Terjemahkan!',opts:['Dog','Cat','Bird','Fish'],ans:1,type:'english',bonus:10,ageGroup:['muda']},
+  {q:'Siapa Nabi pertama dalam Islam?',sub:'Kisah Nabi',opts:['Nabi Adam','Nabi Musa','Nabi Isa','Nabi Nuh'],ans:0,type:'sejarah',bonus:15,ageGroup:['muda']},
+  {q:'Berapa kaki yang dimiliki seekor kucing?',sub:'Pengetahuan Hewan',opts:['2','4','6','8'],ans:1,type:'sains',bonus:10,ageGroup:['muda']},
+  {q:'Berapa jumlah shalat wajib dalam sehari?',sub:'Fiqih Dasar',opts:['3','4','5','6'],ans:2,type:'agama',bonus:15,ageGroup:['muda']},
+
+  // ═══ KELOMPOK MENENGAH (9-11 tahun) — sedang, mulai ada konteks ═══
+  {q:'Apa arti "Shalat" dalam bahasa Arab?',sub:'Pilih jawaban yang benar!',opts:['Doa','Puasa','Zakat','Haji'],ans:0,type:'agama',bonus:20,ageGroup:['menengah']},
+  {q:'How do you say "Selamat Pagi" in English?',sub:'Terjemahkan ke Bahasa Inggris!',opts:['Good Night','Good Afternoon','Good Morning','Good Evening'],ans:2,type:'english',bonus:20,ageGroup:['menengah']},
+  {q:'Berapa hasil dari 7 × 8?',sub:'Hitung dengan cepat!',opts:['54','56','58','62'],ans:1,type:'math',bonus:15,ageGroup:['menengah']},
+  {q:'Surat apakah yang disebut "Ummul Quran"?',sub:'Pengetahuan Al-Quran',opts:['Al-Baqarah','Al-Fatihah','Al-Ikhlas','An-Nas'],ans:1,type:'agama',bonus:20,ageGroup:['menengah']},
+  {q:'Planet apa yang dijuluki "Planet Merah"?',sub:'Pengetahuan Alam Semesta',opts:['Venus','Mars','Jupiter','Saturnus'],ans:1,type:'sains',bonus:20,ageGroup:['menengah']},
+  {q:'Siapa khalifah pertama setelah Nabi Muhammad ﷺ wafat?',sub:'Sejarah Islam',opts:['Umar bin Khattab','Abu Bakar As-Siddiq','Ali bin Abi Thalib','Utsman bin Affan'],ans:1,type:'sejarah',bonus:20,ageGroup:['menengah']},
+  {q:'What is the English word for "Kucing"?',sub:'Terjemahkan ke Bahasa Inggris!',opts:['Dog','Bird','Cat','Fish'],ans:2,type:'english',bonus:15,ageGroup:['menengah']},
+  {q:'Berapa hasil dari 12 × 9?',sub:'Hitung dengan cepat!',opts:['98','106','108','112'],ans:2,type:'math',bonus:20,ageGroup:['menengah']},
+  {q:'Bagian tubuh apa yang berfungsi memompa darah?',sub:'Pengetahuan Tubuh Manusia',opts:['Paru-paru','Jantung','Ginjal','Hati'],ans:1,type:'sains',bonus:20,ageGroup:['menengah']},
+  {q:'Kota apa yang menjadi tujuan hijrah Nabi Muhammad ﷺ dari Mekah?',sub:'Sejarah Islam',opts:['Baghdad','Madinah','Yerusalem','Damaskus'],ans:1,type:'sejarah',bonus:20,ageGroup:['menengah']},
+  {q:'How do you say "Terima Kasih" in English?',sub:'Terjemahkan!',opts:['Sorry','Please','Thank You','Excuse Me'],ans:2,type:'english',bonus:15,ageGroup:['menengah']},
+  {q:'Berapa jumlah rakaat shalat Dzuhur?',sub:'Fiqih Dasar',opts:['2','3','4','5'],ans:2,type:'agama',bonus:20,ageGroup:['menengah']},
+
+  // ═══ KELOMPOK DEWASA (12-15 tahun) — lebih menantang, ada analisis ringan ═══
+  {q:'Manakah yang merupakan kelipatan persekutuan terkecil (KPK) dari 6 dan 8?',sub:'Matematika — KPK',opts:['12','24','48','16'],ans:1,type:'math',bonus:25,ageGroup:['dewasa']},
+  {q:'Siapa penyusun Sirah Nabawiyah yang terkenal berjudul "Ar-Rahiq Al-Makhtum"?',sub:'Sejarah Islam Lanjutan',opts:['Ibnu Hisyam','Shafiyyurrahman Al-Mubarakfuri','Ibnu Katsir','Al-Bukhari'],ans:1,type:'sejarah',bonus:25,ageGroup:['dewasa']},
+  {q:'What does the idiom "break the ice" mean?',sub:'English Idiom',opts:['Membuat keributan','Memulai percakapan dengan santai','Membatalkan rencana','Marah besar'],ans:1,type:'english',bonus:25,ageGroup:['dewasa']},
+  {q:'Proses fotosintesis pada tumbuhan terjadi di bagian sel mana?',sub:'Biologi — Sel Tumbuhan',opts:['Mitokondria','Kloroplas','Nukleus','Ribosom'],ans:1,type:'sains',bonus:25,ageGroup:['dewasa']},
+  {q:'Perang Badar terjadi pada tahun berapa dalam kalender Hijriah?',sub:'Sejarah Islam Lanjutan',opts:['1 H','2 H','3 H','5 H'],ans:1,type:'sejarah',bonus:25,ageGroup:['dewasa']},
+  {q:'Jika x + 5 = 12, berapakah nilai x?',sub:'Aljabar Dasar',opts:['5','6','7','8'],ans:2,type:'math',bonus:20,ageGroup:['dewasa']},
+  {q:'Manakah rukun Islam yang berkaitan dengan ibadah haji?',sub:'Fiqih Lanjutan',opts:['Rukun ke-3','Rukun ke-4','Rukun ke-5','Rukun ke-2'],ans:2,type:'agama',bonus:20,ageGroup:['dewasa']},
+  {q:'What is the correct past tense of "go"?',sub:'English Grammar',opts:['Goed','Went','Gone','Going'],ans:1,type:'english',bonus:20,ageGroup:['dewasa']},
+  {q:'Hukum Newton ketiga menyatakan bahwa setiap aksi akan menghasilkan...',sub:'Fisika Dasar',opts:['Reaksi yang sama besar dan berlawanan arah','Gerakan melingkar','Energi panas','Tidak ada efek'],ans:0,type:'sains',bonus:25,ageGroup:['dewasa']},
+  {q:'Siapakah pendiri Dinasti Umayyah?',sub:'Sejarah Islam Lanjutan',opts:['Muawiyah bin Abi Sufyan','Abdul Malik bin Marwan','Yazid bin Muawiyah','Al-Walid bin Abdul Malik'],ans:0,type:'sejarah',bonus:25,ageGroup:['dewasa']},
 ];
+
+// Ambil kuis acak yang SESUAI kelompok usia siswa.
+// Jika tidak ada soal untuk kelompok tersebut (seharusnya tidak terjadi), fallback ke semua soal.
+function getQuizForStudent(student){
+  const group = getActiveThemeGroup(student);
+  const filtered = QUIZZES.filter(q => !q.ageGroup || q.ageGroup.includes(group));
+  const pool = filtered.length > 0 ? filtered : QUIZZES;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 
 const BADGES = [
   {icon:'🌅',name:'Juara Pagi',req:'Streak 7 hari'},

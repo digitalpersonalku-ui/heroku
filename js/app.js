@@ -1641,7 +1641,7 @@ let currentQuiz=null;
 function showQuiz(){
   closeOverlay('card');
   const u=CU;
-  currentQuiz=QUIZZES[Math.floor(Math.random()*QUIZZES.length)];
+  currentQuiz=getQuizForStudent(u);
   quizAnswered=false;
   document.getElementById('quiz-q').textContent=currentQuiz.q;
   document.getElementById('quiz-sub-text').textContent=currentQuiz.sub;
