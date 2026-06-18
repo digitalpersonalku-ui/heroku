@@ -411,6 +411,117 @@ function getAvatarSVG(avatarId, size){
   </svg>`;
 }
 
+// ══════════════════════════════════════════════════════════
+// GENERATOR MOBIL — Siluet realistis seperti game (bukan kotak sederhana)
+// Dipakai bersama di renderWorld() (peta personal) dan renderRaceTrack() (sirkuit).
+// Mengembalikan STRING konten <g>...</g> SAJA (tanpa <svg> pembungkus),
+// supaya bisa ditempel langsung di dalam SVG peta/sirkuit yang lebih besar.
+// opts: { color, isDark, hasNitro, hasSpoiler, avatarId, stickers, scale }
+// ══════════════════════════════════════════════════════════
+function getCarSVG(opts){
+  const o = Object.assign({
+    color:'#F39C12', isDark:false, hasNitro:false, hasSpoiler:false,
+    avatarId:'b1', stickers:'', scale:1, showAvatar:true,
+  }, opts || {});
+  const s = o.scale;
+  const darken = (hex, amt) => {
+    // Sedikit menggelapkan warna hex untuk efek shading bawah body
+    const n = parseInt(hex.replace('#',''),16);
+    let r=(n>>16)-amt, g=((n>>8)&0xff)-amt, b=(n&0xff)-amt;
+    r=Math.max(0,r); g=Math.max(0,g); b=Math.max(0,b);
+    return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+  };
+  const colorDark = darken(o.color, 35);
+  const gradId = 'carGrad'+Math.random().toString(36).slice(2,8);
+
+  return `
+    <defs>
+      <linearGradient id="${gradId}" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="${o.color}"/>
+        <stop offset="100%" stop-color="${colorDark}"/>
+      </linearGradient>
+    </defs>
+    <g transform="scale(${s})">
+      <!-- Bayangan tanah -->
+      <ellipse cx="0" cy="15" rx="20" ry="5" fill="rgba(0,0,0,0.28)"/>
+
+      <!-- Nitro flames -->
+      ${o.hasNitro?`
+      <g style="animation:nitroFlame 0.35s infinite">
+        <ellipse cx="-21" cy="-2" rx="5" ry="2.5" fill="#FFB347" opacity="0.9"/>
+        <ellipse cx="-25" cy="1" rx="3.5" ry="2" fill="#FF6B35"/>
+      </g>
+      <g style="animation:nitroFlame 0.35s infinite 0.12s">
+        <ellipse cx="-21" cy="6" rx="5" ry="2.5" fill="#FFB347" opacity="0.9"/>
+        <ellipse cx="-25" cy="9" rx="3.5" ry="2" fill="#FF6B35"/>
+      </g>`:''}
+
+      <!-- BODI MOBIL — siluet aerodinamis sporty, bukan kotak -->
+      <path d="M -19 8
+        Q -19 1 -15 -2
+        L -11 -8
+        Q -8 -13 0 -13
+        Q 9 -13 13 -8
+        L 17 -1
+        Q 20 2 19 8
+        Q 19 12 14 12
+        L -14 12
+        Q -19 12 -19 8 Z"
+        fill="url(#${gradId})" stroke="${colorDark}" stroke-width="0.6"/>
+
+      <!-- Garis highlight atas body (efek cahaya/kilau) -->
+      <path d="M -13 -7 Q -7 -12 0 -12 Q 7 -12 12 -7" stroke="rgba(255,255,255,0.55)" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+
+      <!-- Kap & kaca depan (menyatu dengan body, miring realistis) -->
+      <path d="M -10 -7 Q -7 -11 -1 -11 L 6 -11 Q 9 -8 9 -3 L -8 -3 Z"
+        fill="${o.isDark?'rgba(170,205,255,0.88)':'rgba(195,230,255,0.92)'}" stroke="${colorDark}" stroke-width="0.4"/>
+      <!-- Pantulan cahaya di kaca -->
+      <path d="M -6 -9 L -2 -9 L -4 -4 L -7 -4 Z" fill="rgba(255,255,255,0.6)"/>
+
+      <!-- Garis pintu & lekukan body -->
+      <path d="M -14 2 Q 0 0 14 2" stroke="${colorDark}" stroke-width="0.5" fill="none" opacity="0.6"/>
+      <line x1="-2" y1="-3" x2="-2" y2="9" stroke="${colorDark}" stroke-width="0.5" opacity="0.5"/>
+
+      <!-- Spoiler -->
+      ${o.hasSpoiler?`
+      <rect x="-17" y="-16" width="6" height="3" rx="1" fill="${colorDark}"/>
+      <rect x="11" y="-16" width="6" height="3" rx="1" fill="${colorDark}"/>
+      <rect x="-15" y="-19" width="30" height="3.5" rx="1.5" fill="${o.color}" stroke="${colorDark}" stroke-width="0.4"/>`:''}
+
+      <!-- Roda belakang (lebih besar, perspektif depan-belakang) -->
+      <circle cx="-12" cy="11" r="6" fill="#1A1A1A"/>
+      <circle cx="-12" cy="11" r="3.6" fill="#4A4A4A"/>
+      <circle cx="-12" cy="11" r="1.4" fill="#888"/>
+      <!-- spoke velg -->
+      <g stroke="#777" stroke-width="0.6">
+        <line x1="-12" y1="8.2" x2="-12" y2="13.8"/><line x1="-14.8" y1="11" x2="-9.2" y2="11"/>
+      </g>
+
+      <!-- Roda depan -->
+      <circle cx="12" cy="11" r="6" fill="#1A1A1A"/>
+      <circle cx="12" cy="11" r="3.6" fill="#4A4A4A"/>
+      <circle cx="12" cy="11" r="1.4" fill="#888"/>
+      <g stroke="#777" stroke-width="0.6">
+        <line x1="12" y1="8.2" x2="12" y2="13.8"/><line x1="9.2" y1="11" x2="14.8" y2="11"/>
+      </g>
+
+      <!-- Lampu depan & belakang -->
+      <ellipse cx="18" cy="2" rx="2" ry="3" fill="${o.isDark?'#FFE066':'#FFF3B0'}"/>
+      <ellipse cx="-18" cy="2" rx="1.6" ry="2.6" fill="#FF4D4D"/>
+
+      <!-- Avatar karakter di atas kap (mengintip dari kaca) -->
+      ${o.showAvatar?`<text x="0" y="-5" text-anchor="middle" font-size="${7*s>6?7:6}">${getAvatarEmoji(o.avatarId)}</text>`:''}
+      ${o.stickers?`<text x="9" y="-9" font-size="5">${o.stickers}</text>`:''}
+
+      <!-- Garis kecepatan (saat bergerak) -->
+      <g opacity="0.45" stroke="${o.isDark?'white':'#555'}" stroke-linecap="round">
+        <line x1="-23" y1="-3" x2="-30" y2="-3" stroke-width="1.4"/>
+        <line x1="-24" y1="3" x2="-33" y2="3" stroke-width="1.8"/>
+        <line x1="-23" y1="8" x2="-29" y2="8" stroke-width="1"/>
+      </g>
+    </g>`;
+}
+
 
 const DEFAULT_STAFF = [
   {id:'guru01', name:'Reski Wulandari, S.Pd.',        role:'guru',   kelas:'Usman Bin Affan',    password:'guru01',     avatar:'👩‍🏫'},

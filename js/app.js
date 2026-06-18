@@ -567,44 +567,14 @@ function renderWorld(){
 
     <!-- CAR -->
     <g transform="translate(${Math.round(car.x)},${Math.round(car.y)})">
-      <!-- Headlights (visible in dark) -->
+      <!-- Headlights glow (visible in dark) -->
       ${isDark?`
       <ellipse cx="18" cy="4" rx="28" ry="8" fill="rgba(255,255,200,0.12)"/>
       <ellipse cx="18" cy="4" rx="16" ry="5" fill="rgba(255,255,150,0.2)"/>`:''}
-      <!-- Shadow -->
-      <ellipse cx="0" cy="13" rx="18" ry="6" fill="rgba(0,0,0,0.25)"/>
-      <!-- Nitro flames -->
-      ${hasNitro?`
-      <text x="-24" y="0" font-size="10" style="animation:nitroFlame 0.4s infinite">🔥</text>
-      <text x="-28" y="8" font-size="13" style="animation:nitroFlame 0.4s infinite 0.1s">🔥</text>`:''}
-      <!-- Body -->
-      <rect x="-16" y="-16" width="32" height="22" rx="7" fill="${carColor}"/>
-      <!-- Roof -->
-      <rect x="-11" y="-28" width="22" height="16" rx="5" fill="${carColor}" opacity="0.9"/>
-      <!-- Windscreen -->
-      <rect x="-9" y="-26" width="18" height="12" rx="3" fill="${isDark?'rgba(180,210,255,0.85)':'rgba(200,235,255,0.9)'}"/>
-      <!-- Windscreen highlight -->
-      <rect x="-7" y="-24" width="5" height="4" rx="1" fill="rgba(255,255,255,0.7)"/>
-      <!-- Spoiler -->
-      ${hasSpoiler?`<rect x="-14" y="-32" width="28" height="5" rx="2" fill="${carColor}" opacity="0.8"/>
-      <rect x="-12" y="-36" width="8" height="4" rx="1" fill="${carColor}"/>
-      <rect x="4" y="-36" width="8" height="4" rx="1" fill="${carColor}"/>`:''}
-      <!-- Wheels -->
-      <circle cx="-10" cy="7" r="5" fill="#2C3E50"/>
-      <circle cx="-10" cy="7" r="2.5" fill="#7F8C8D"/>
-      <circle cx="10" cy="7" r="5" fill="#2C3E50"/>
-      <circle cx="10" cy="7" r="2.5" fill="#7F8C8D"/>
-      <!-- Headlights -->
-      <rect x="13" y="-10" width="5" height="6" rx="2" fill="${isDark?'#FFE066':'rgba(255,230,0,0.7)'}"/>
-      <!-- Avatar + stickers -->
-      <text x="0" y="-12" text-anchor="middle" font-size="13">${getAvatarEmoji(u.avatar)}</text>
-      ${activeStickers?`<text x="14" y="-18" font-size="9">${activeStickers}</text>`:''}
-      <!-- Motion lines -->
-      ${totalKoin>0?`
-      <line x1="-19" y1="-6"  x2="-30" y2="-6"  stroke="white" stroke-width="2"   opacity="0.4" stroke-linecap="round"/>
-      <line x1="-19" y1="0"   x2="-33" y2="0"    stroke="white" stroke-width="2.5" opacity="0.3" stroke-linecap="round"/>
-      <line x1="-19" y1="6"   x2="-28" y2="6"    stroke="white" stroke-width="1.5" opacity="0.25" stroke-linecap="round"/>
-      `:''}
+      ${getCarSVG({
+        color: carColor, isDark, hasNitro, hasSpoiler,
+        avatarId: u.avatar, stickers: activeStickers, scale: 1.7,
+      })}
     </g>
 
     <!-- Koin badge -->
@@ -832,14 +802,15 @@ function renderGarasi(){
   if(preview) {
     preview.innerHTML = `
       <div style="position:relative;display:inline-block">
-        ${hasNitro ? '<div style="position:absolute;bottom:-10px;left:5px;font-size:20px;animation:nitroFlame 0.4s infinite">🔥</div><div style="position:absolute;bottom:-10px;right:5px;font-size:20px;animation:nitroFlame 0.4s infinite 0.2s">🔥</div>' : ''}
-        <div style="font-size:70px;animation:raceFloat 2s ease-in-out infinite;
-          filter:drop-shadow(0 6px 12px rgba(0,0,0,0.4)) hue-rotate(${getHueRotate(colorCfg.color)}deg)">
-          🚗
-        </div>
-        ${hasSpoiler ? '<div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:16px">🏁</div>' : ''}
-        ${activeStickers ? `<div style="position:absolute;top:0;right:-10px;font-size:14px;line-height:1.4">${activeStickers}</div>` : ''}
-        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px">${getAvatarEmoji(u.avatar)} ${u.nickname||u.name.split(' ')[0]}</div>
+        <svg width="180" height="110" viewBox="-30 -20 60 40" xmlns="http://www.w3.org/2000/svg"
+          style="filter:drop-shadow(0 8px 16px rgba(0,0,0,0.4));animation:raceFloat 2.5s ease-in-out infinite">
+          ${getCarSVG({
+            color: colorCfg.color, isDark: true,
+            hasNitro, hasSpoiler,
+            avatarId: u.avatar, stickers: activeStickers, scale: 1.3,
+          })}
+        </svg>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px">${getAvatarEmoji(u.avatar)} ${u.nickname||u.name.split(' ')[0]}</div>
       </div>`;
   }
   const nameEl = document.getElementById('garasi-car-name');
@@ -1256,29 +1227,15 @@ function renderSchool(){
               left:${Math.max(2,Math.min(pos, trackLen-20))}px;
               transition:left 1s cubic-bezier(0.25,0.46,0.45,0.94)">
 
-              <!-- Nitro flames -->
-              ${mods.hasNitro||s.streak>=3?`
-              <div style="position:absolute;right:100%;top:50%;transform:translateY(-50%);
-                display:flex;gap:1px">
-                <div style="font-size:8px;animation:nitroFlame 0.3s infinite">🔥</div>
-                <div style="font-size:10px;animation:nitroFlame 0.3s infinite 0.1s">🔥</div>
-              </div>`:''}
-
-              <!-- Car body (SVG mini) -->
-              <svg width="36" height="24" viewBox="0 0 36 24" xmlns="http://www.w3.org/2000/svg"
+              <!-- Car body (SVG realistis, mini) -->
+              <svg width="42" height="32" viewBox="-21 -16 42 32" xmlns="http://www.w3.org/2000/svg"
                 style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">
-                <rect x="1" y="10" width="34" height="12" rx="4" fill="${cc}"/>
-                <rect x="6" y="4" width="22" height="10" rx="3" fill="${cc}" opacity="0.85"/>
-                <rect x="8" y="5" width="9" height="7" rx="2" fill="rgba(200,235,255,0.9)"/>
-                <rect x="19" y="5" width="7" height="7" rx="2" fill="rgba(200,235,255,0.9)"/>
-                ${mods.hasSpoiler?'<rect x="1" y="8" width="5" height="3" rx="1" fill="'+cc+'"/><rect x="30" y="8" width="5" height="3" rx="1" fill="'+cc+'"/>':''}
-                <circle cx="9" cy="21" r="3" fill="#2C3E50"/><circle cx="9" cy="21" r="1.5" fill="#7F8C8D"/>
-                <circle cx="27" cy="21" r="3" fill="#2C3E50"/><circle cx="27" cy="21" r="1.5" fill="#7F8C8D"/>
-                <rect x="32" y="13" width="4" height="4" rx="1" fill="#FFE066" opacity="0.9"/>
+                ${getCarSVG({
+                  color: cc, isDark: true,
+                  hasNitro: mods.hasNitro || s.streak>=3, hasSpoiler: mods.hasSpoiler,
+                  avatarId: s.avatar, stickers: mods.stickers, scale: 1,
+                })}
               </svg>
-
-              <!-- Avatar + stickers on car -->
-              <div style="position:absolute;top:-16px;left:6px;width:16px;height:16px;line-height:1">${getAvatarSVG(s.avatar, 16)}${mods.stickers}</div>
             </div>
 
             <!-- Exhaust puffs animation if active today -->
