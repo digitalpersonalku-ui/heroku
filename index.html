@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HeroKu — SDIT Qudwatun Hasanah</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+<!-- MISSION CARD OVERLAY -->
+<div id="overlay-mission" style="display:none;position:fixed;inset:0;z-index:400;
+  background:rgba(10,15,30,0.85);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:20px;flex-direction:column">
+
+  <div id="mission-card" style="width:100%;max-width:340px;border-radius:28px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 0 1.5px rgba(255,255,255,0.15);
+    animation:cardEntrance 0.45s cubic-bezier(0.34,1.56,0.64,1)">
+
+    <!-- Card Header -->
+    <div id="mc-header" style="padding:20px 20px 14px;text-align:center;position:relative;
+      overflow:hidden;min-height:200px;display:flex;flex-direction:column;
+      align-items:center;justify-content:flex-end;background:linear-gradient(135deg,#27AE60,#2ECC71)">
+      <div id="mc-anim-bg" style="position:absolute;inset:0;display:flex;align-items:center;
+        justify-content:center;overflow:hidden;flex-direction:column;gap:8px"></div>
+      <div id="mc-main-icon" style="position:relative;z-index:2;font-size:60px;display:none"></div>
+      <div id="mc-habit-name" style="position:relative;z-index:2;font-family:var(--font-round,'Trebuchet MS',sans-serif);
+        font-size:20px;font-weight:900;color:white;text-shadow:0 2px 8px rgba(0,0,0,0.4)"></div>
+    </div>
+
+    <!-- Card Body -->
+    <div id="mc-body" style="background:#FFFEF8;padding:16px 18px 18px;text-align:center">
+      <div id="mc-rarity" style="display:inline-flex;align-items:center;gap:5px;
+        padding:3px 12px;border-radius:20px;font-size:10px;font-weight:800;
+        font-family:var(--font-round,'Trebuchet MS',sans-serif);
+        margin-bottom:10px;letter-spacing:0.5px"></div>
+
+      <div id="mc-question" style="font-family:var(--font-round,'Trebuchet MS',sans-serif);
+        font-size:15px;font-weight:800;color:#1A1A2E;line-height:1.5;margin-bottom:5px"></div>
+
+      <div id="mc-sub" style="font-size:11px;color:#7F8C8D;line-height:1.6;margin-bottom:12px"></div>
+
+      <div id="mc-rewards" style="display:flex;gap:5px;justify-content:center;
+        flex-wrap:wrap;margin-bottom:14px"></div>
+
+      <button id="mc-yes-btn" onclick="missionYes()" style="width:100%;padding:14px;
+        border:none;border-radius:14px;color:white;
+        font-family:var(--font-round,'Trebuchet MS',sans-serif);
+        font-weight:900;font-size:15px;cursor:pointer;margin-bottom:8px;
+        background:linear-gradient(135deg,#27AE60,#2ECC71);
+        box-shadow:0 4px 16px rgba(46,204,113,0.4)">
+        ✅ Iya, sudah!
+      </button>
+      <button onclick="missionNo()" style="width:100%;padding:11px;
+        background:transparent;border:2px solid #E0E0E0;border-radius:12px;
+        color:#999;font-family:var(--font-round,'Trebuchet MS',sans-serif);
+        font-weight:700;font-size:13px;cursor:pointer">
+        Belum hari ini
+      </button>
+    </div>
+  </div>
+
+  <div id="mc-particles" style="position:fixed;inset:0;pointer-events:none;z-index:401;overflow:hidden"></div>
+</div>
+
+<!-- OVERLAY: BUILDING UNLOCK -->
+<div class="overlay" id="overlay-building">
+  <div class="bu-stars" id="bu-stars">⭐ ⭐ ⭐</div>
+  <div class="bu-icon-wrap">
+    <div class="bu-rays"></div>
+    <span class="bu-icon" id="bu-icon">🏡</span>
+  </div>
+  <div class="bu-label">Bangunan Baru Terbuka!</div>
+  <div class="bu-name" id="bu-name">Pondok Pertama</div>
+  <div class="bu-desc" id="bu-desc">Desamu kini punya tempat berteduh yang nyaman.</div>
+  <div class="bu-hadis" id="bu-hadis"></div>
+  <div class="bu-koin-badge"><span>⭐</span><span id="bu-total-koin">0 Koin</span></div>
+  <div class="bu-confetti" id="bu-confetti">🌟✨🎊🏆🎉✨🌟</div>
+  <button class="btn-next" id="bu-next-btn" onclick="afterBuildingUnlock()">Lanjut →</button>
+</div>
+
+<!-- OVERLAY: CELEBRATION -->
+<div class="overlay" id="overlay-celebrate">
+  <div class="confetti-row">✨🎊⭐🎉✨🎊⭐</div>
+  <span class="celebrate-emoji" id="cel-emoji">🎉</span>
+  <div class="celebrate-title" id="cel-title">MasyaAllah!</div>
+  <div class="celebrate-building" id="cel-building">🕌</div>
+  <div class="celebrate-building-name" id="cel-building-name">Kamu membangun Masjid!</div>
+  <div class="celebrate-sub" id="cel-sub">Kamu menyelesaikan semua 7 kebiasaan hari ini!</div>
+  <button class="btn-next" onclick="showCardReveal()">Ambil Kartu Hadiahmu →</button>
+</div>
+
+<!-- OVERLAY: CARD REVEAL -->
+<div class="overlay" id="overlay-card">
+  <div class="card-reveal-label">✨ Kartu Baru Didapat!</div>
+  <div class="big-card" id="big-card"></div>
+  <div class="card-flavor" id="card-flavor"></div>
+  <button class="btn-next" onclick="showQuiz()">Lanjut ke Kuis →</button>
+</div>
+
+<!-- OVERLAY: SERTIFIKAT -->
+<div id="overlay-sertifikat" style="display:none;position:fixed;inset:0;z-index:400;
+  background:rgba(10,15,30,0.88);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:20px;flex-direction:column">
+
+  <!-- Certificate Card -->
+  <div style="width:100%;max-width:340px;border-radius:20px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:cardEntrance 0.4s cubic-bezier(0.34,1.56,0.64,1)">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#1A1A2E,#0F3460);padding:20px;text-align:center;
+      position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;left:-20px;width:80px;height:80px;
+        background:rgba(255,215,0,0.1);border-radius:50%"></div>
+      <div style="position:absolute;top:-10px;right:-10px;width:60px;height:60px;
+        background:rgba(46,204,113,0.15);border-radius:50%"></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:2px;
+        text-transform:uppercase;margin-bottom:6px">SDIT Qudwatun Hasanah</div>
+      <div style="font-family:var(--font-round);font-size:18px;font-weight:900;
+        color:#FFE066;margin-bottom:2px">Sertifikat Prestasi</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.5)">Program 7 Kebiasaan Anak Indonesia Hebat</div>
+    </div>
+
+    <!-- Body -->
+    <div style="background:#FFFEF5;padding:20px;text-align:center;
+      border:1px solid #F0E0A0;border-top:none">
+      <div style="font-size:12px;color:#856404;margin-bottom:8px">Diberikan kepada</div>
+      <div id="sert-avatar" style="font-size:48px;margin-bottom:6px">🦁</div>
+      <div id="sert-name" style="font-family:var(--font-round);font-size:20px;
+        font-weight:900;color:#1A1A2E;margin-bottom:4px">Ahmad Badshah</div>
+      <div id="sert-class" style="font-size:11px;color:#7F8C8D;margin-bottom:12px">Kelas Usman Bin Affan</div>
+
+      <div style="border-top:1px dashed #E0C080;border-bottom:1px dashed #E0C080;
+        padding:10px 0;margin-bottom:12px">
+        <div style="font-size:11px;color:#856404;margin-bottom:3px">Atas prestasi dalam</div>
+        <div id="sert-reason" style="font-family:var(--font-round);font-size:13px;
+          font-weight:800;color:#1A1A2E;line-height:1.4">Konsistensi Luar Biasa</div>
+        <div id="sert-tier" style="font-size:12px;color:#F39C12;margin-top:4px;
+          font-weight:800">🥇 Tier Emas</div>
+      </div>
+
+      <!-- Stars decoration -->
+      <div style="font-size:18px;letter-spacing:6px;margin-bottom:10px;color:#F1C40F">⭐⭐⭐</div>
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-end">
+        <div style="text-align:center">
+          <div style="width:80px;height:1px;background:#CCC;margin-bottom:4px"></div>
+          <div style="font-size:9px;color:#999">Kepala Sekolah</div>
+          <div style="font-size:9px;font-weight:700;color:#555">Musyarrafah, S.Psi., M.Pd.</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:24px">🏆</div>
+          <div style="font-size:8px;color:#999">HeroKu</div>
+        </div>
+        <div style="text-align:center">
+          <div style="width:80px;height:1px;background:#CCC;margin-bottom:4px"></div>
+          <div style="font-size:9px;color:#999">Tanggal</div>
+          <div id="sert-date" style="font-size:9px;font-weight:700;color:#555">14 Juni 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:14px;width:100%;max-width:340px">
+    <button onclick="showToast('📥 Fitur unduh tersedia di versi penuh!')"
+      style="flex:1;padding:12px;background:var(--green);border:none;border-radius:12px;
+      color:#fff;font-family:var(--font-round);font-weight:800;font-size:13px;cursor:pointer">
+      📥 Unduh PDF
+    </button>
+    <button onclick="document.getElementById('overlay-sertifikat').style.display='none'"
+      style="flex:1;padding:12px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);
+      border-radius:12px;color:#fff;font-family:var(--font-round);font-weight:700;font-size:13px;cursor:pointer">
+      Tutup
+    </button>
+  </div>
+</div>
+
+<!-- OVERLAY: QUIZ -->
+<div class="overlay" id="overlay-quiz">
+  <div class="quiz-label">🧠 Kuis Harian</div>
+  <div class="quiz-question" id="quiz-q"></div>
+  <div class="quiz-sub" id="quiz-sub-text"></div>
+  <div class="quiz-options" id="quiz-opts"></div>
+  <div class="quiz-result" id="quiz-result"></div>
+  <div class="quiz-result-sub" id="quiz-result-sub"></div>
+  <div class="quiz-reward" id="quiz-reward"></div>
+  <button class="btn-next" id="quiz-next-btn" onclick="finishSession()" style="display:none">Selesai! →</button>
+</div>
+
+<!-- ==================== WELCOME / ONBOARDING ==================== -->
+<div id="screen-welcome" class="screen active" style="background:linear-gradient(160deg,#1A1A2E,#0F3460,#0A2744);
+  align-items:center;justify-content:center;padding:2rem;text-align:center">
+
+  <div style="max-width:360px;width:100%">
+    <!-- Animated logo -->
+    <div style="font-size:80px;margin-bottom:12px;animation:float 3s ease-in-out infinite;
+      filter:drop-shadow(0 8px 24px rgba(46,204,113,0.6))">🏆</div>
+
+    <div style="font-family:var(--font-round);font-size:38px;font-weight:900;color:#fff;
+      letter-spacing:-1px;margin-bottom:4px">HeroKu</div>
+    <div style="font-size:13px;color:#9FE1CB;margin-bottom:4px">7 Kebiasaan Anak Indonesia Hebat</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:32px">SDIT Qudwatun Hasanah</div>
+
+    <!-- Feature highlights -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
+      <div class="welcome-feat">
+        <span style="font-size:24px">🗺️</span>
+        <div>
+          <div style="font-family:var(--font-round);font-size:13px;font-weight:800;color:#fff">Bangun Desamu Sendiri</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55)">Setiap kebiasaan membangun bangunan baru di dunia virtualmu</div>
+        </div>
+      </div>
+      <div class="welcome-feat">
+        <span style="font-size:24px">🏎️</span>
+        <div>
+          <div style="font-family:var(--font-round);font-size:13px;font-weight:800;color:#fff">Balap Bersama Teman Kelas</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55)">Grand Prix sirkuit kelas — konsistensimu = kecepatanmu</div>
+        </div>
+      </div>
+      <div class="welcome-feat">
+        <span style="font-size:24px">🧕</span>
+        <div>
+          <div style="font-family:var(--font-round);font-size:13px;font-weight:800;color:#fff">Dibimbing Syekh Al-Fath</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55)">Mentor AI yang memberikan nasehat personal setiap hari</div>
+        </div>
+      </div>
+      <div class="welcome-feat">
+        <span style="font-size:24px">📖</span>
+        <div>
+          <div style="font-family:var(--font-round);font-size:13px;font-weight:800;color:#fff">Kartu Islami & Kuis Harian</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.55)">Koleksi kartu hadis, kuis Al-Quran, dan tantangan seru</div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="goToLogin()" style="width:100%;padding:15px;background:var(--green);
+      border:none;border-radius:16px;color:#fff;font-family:var(--font-round);
+      font-weight:900;font-size:16px;cursor:pointer;
+      box-shadow:0 8px 24px rgba(46,204,113,0.4);
+      animation:pulse 2s infinite;margin-bottom:12px">
+      Mulai Petualangan →
+    </button>
+
+    <div style="font-size:10px;color:rgba(255,255,255,0.3)">
+      Sudah punya akun? Masukkan PIN siswa di halaman berikutnya.
+    </div>
+
+    <div style="margin-top:24px;font-size:10px;color:rgba(255,255,255,0.2)">
+      Versi Demo · SDIT Qudwatun Hasanah · 2025
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOGIN ==================== -->
+<div id="screen-login" class="screen">
+  <div class="login-logo">
+    <span class="logo-icon">🏆</span>
+    <div class="logo-title">HeroKu</div>
+    <div class="logo-school">SDIT Qudwatun Hasanah</div>
+  </div>
+  <div class="login-box">
+    <!-- ROLE SELECTOR -->
+    <div class="login-section-label" style="margin-bottom:8px">Masuk sebagai</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px" id="role-selector">
+      <button class="role-btn selected" onclick="setLoginRole('anak',this)">
+        <span class="ri">🧒</span><span style="font-size:10px">Siswa</span>
+      </button>
+      <button class="role-btn" onclick="setLoginRole('ortu',this)">
+        <span class="ri">👨‍👩‍👧</span><span style="font-size:10px">Orang Tua</span>
+      </button>
+      <button class="role-btn" onclick="setLoginRole('guru',this)">
+        <span class="ri">👩‍🏫</span><span style="font-size:10px">Guru</span>
+      </button>
+      <button class="role-btn" onclick="setLoginRole('kepsek',this)">
+        <span class="ri">🏫</span><span style="font-size:10px">Kepsek</span>
+      </button>
+      <button class="role-btn" onclick="setLoginRole('admin',this)">
+        <span class="ri">⚙️</span><span style="font-size:10px">Admin</span>
+      </button>
+    </div>
+
+    <!-- SISWA LOGIN: PIN 4 digit -->
+    <div id="login-anak">
+      <div class="login-section-label">PIN Siswa (4 digit)</div>
+      <div class="pin-hint">Masukkan PIN yang diberikan guru</div>
+      <div class="pin-input-wrap">
+        <input class="pin-digit" id="p0" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(0)">
+        <input class="pin-digit" id="p1" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(1)">
+        <input class="pin-digit" id="p2" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(2)">
+        <input class="pin-digit" id="p3" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(3)">
+      </div>
+      <div class="pin-error" id="pin-error"></div>
+      <button class="btn-go" onclick="loginWithPin()">Masuk sebagai Siswa →</button>
+    </div>
+
+    <!-- ORTU LOGIN: PIN 4 digit anak -->
+    <div id="login-ortu" style="display:none">
+      <div class="login-section-label">PIN Orang Tua (4 digit)</div>
+      <div class="pin-hint">Masukkan PIN orang tua dari kartu sekolah</div>
+      <div class="pin-input-wrap">
+        <input class="pin-digit" id="op0" maxlength="1" type="password" inputmode="numeric" oninput="pinNextOrtu(0)">
+        <input class="pin-digit" id="op1" maxlength="1" type="password" inputmode="numeric" oninput="pinNextOrtu(1)">
+        <input class="pin-digit" id="op2" maxlength="1" type="password" inputmode="numeric" oninput="pinNextOrtu(2)">
+        <input class="pin-digit" id="op3" maxlength="1" type="password" inputmode="numeric" oninput="pinNextOrtu(3)">
+      </div>
+      <div class="pin-error" id="pin-error-ortu"></div>
+      <button class="btn-go" onclick="loginOrtu()">Masuk sebagai Orang Tua →</button>
+    </div>
+
+    <!-- STAFF LOGIN: username + password -->
+    <div id="login-staff" style="display:none">
+      <div class="login-section-label" id="staff-label">Password Guru</div>
+      <input class="login-input" id="staff-id-input" placeholder="ID / Username"
+        style="margin-bottom:8px">
+      <input class="login-input" id="staff-pass-input" placeholder="Password"
+        type="password" style="margin-bottom:4px"
+        onkeydown="if(event.key==='Enter')loginStaffPassword()">
+      <div class="pin-error" id="pin-error-staff"></div>
+      <button class="btn-go" onclick="loginStaffPassword()">Masuk →</button>
+      <div style="margin-top:8px;padding:8px;background:rgba(255,255,255,0.06);
+        border-radius:8px;font-size:10px;color:rgba(255,255,255,0.4);line-height:1.6"
+        id="staff-hint"></div>
+    </div>
+
+    <div class="hint-text" style="margin-top:10px">
+      PIN & password tersedia dari Kepala Sekolah SDIT Qudwatun Hasanah
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div id="screen-app" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">🏆 HeroKu</div>
+    <div class="topbar-right">
+      <div class="tier-pill" id="topbar-tier">🥉 Perunggu</div>
+      <div class="topbar-av" id="topbar-av">👤</div>
+      <div>
+        <div class="topbar-name" id="topbar-name">—</div>
+        <div class="topbar-sub" id="topbar-sub">—</div>
+      </div>
+      <button onclick="doLogout()" title="Keluar" style="background:none;border:none;
+        cursor:pointer;font-size:18px;padding:4px 6px;opacity:0.5;transition:opacity 0.2s;
+        border-radius:8px;line-height:1" onmouseover="this.style.opacity=1"
+        onmouseout="this.style.opacity=0.5">🚪</button>
+    </div>
+  </div>
+
+  <div class="main" id="main-content">
+    <!-- BERANDA -->
+    <div class="tab-page active" id="page-beranda">
+      <div class="hero">
+        <div class="hero-greeting" id="hero-greeting">Assalamu'alaikum,</div>
+        <div class="hero-name" id="hero-name">—</div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="hstat-icon">⭐</div><div><div class="hstat-num" id="stat-koin">0</div><div class="hstat-label">Koin</div></div></div>
+          <div class="hstat"><div class="hstat-icon">✨</div><div><div class="hstat-num" id="stat-xp-pct">0%</div><div class="hstat-label">XP Level <span id="hero-level">1</span></div></div></div>
+        </div>
+        <div class="xp-label"><span>Menuju Level <span id="next-level">2</span></span><span id="xp-text">0/100</span></div>
+        <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="streak-row" id="streak-row"></div>
+
+      <div class="mentor-card">
+        <div class="mentor-head">
+          <div class="mentor-av">🧕</div>
+          <div><div class="mentor-name">Syekh Al-Fath</div><div class="mentor-sub">Nasehat & Bimbingan Harianmu</div></div>
+        </div>
+        <div class="mentor-msg" id="mentor-msg">—</div>
+        <div class="mentor-ortu-note" id="mentor-ortu-note" style="display:none"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="sec-title" style="margin:0">Misi Hari Ini</div>
+        <span style="font-size:10px;color:var(--muted)" id="done-label">0/7 selesai</span>
+      </div>
+      <div id="habits-list"></div>
+    </div>
+
+    <!-- DUNIA -->
+    <div class="tab-page" id="page-dunia">
+      <div id="world-display"></div>
+      <div class="sec-title">Badge</div>
+      <div class="badges-grid" id="badges-grid"></div>
+      <div class="sec-title">Kartu Koleksi (<span id="cards-count">0</span>)</div>
+      <div class="cards-grid" id="cards-grid"></div>
+    </div>
+
+    <!-- ORTU -->
+    <div class="tab-page" id="page-ortu">
+      <div style="background:linear-gradient(135deg,#1A1A2E,#0F3460);padding:16px;border-radius:18px;margin-bottom:11px;color:#fff">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:7px">Laporan Orang Tua</div>
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+          <div style="width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid rgba(255,255,255,0.2)" id="ortu-av">👤</div>
+          <div><div style="font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:16px;font-weight:900" id="ortu-name">—</div><div style="font-size:10px;color:rgba(255,255,255,0.6)" id="ortu-sub">—</div></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:9px;padding:7px 11px;font-size:11px;color:rgba(255,255,255,0.8)" id="ortu-summary">—</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:11px">
+        <div class="sstat"><div class="sstat-num" id="o-stat1" style="color:var(--green-dark)">0%</div><div class="sstat-lbl">Hari ini</div></div>
+        <div class="sstat"><div class="sstat-num" id="o-stat2" style="color:#E67E22">0</div><div class="sstat-lbl">Hari streak</div></div>
+        <div class="sstat"><div class="sstat-num" id="o-stat3" style="color:var(--purple)">0</div><div class="sstat-lbl">Total koin</div></div>
+      </div>
+
+      <div style="background:#FFF8E7;border-radius:13px;padding:11px;margin-bottom:11px;border-left:4px solid var(--amber)">
+        <div style="font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:11px;font-weight:800;color:#856404;margin-bottom:4px">⚠️ Perlu Verifikasi Orang Tua</div>
+        <div style="font-size:11px;color:#6D4C0F;line-height:1.6" id="ortu-verify-note">Beberapa kebiasaan perlu konfirmasi Anda. Tanyakan langsung kepada anak apakah benar-benar dilakukan.</div>
+        <div id="ortu-unverified-list" style="margin-top:8px"></div>
+        <div id="ortu-verified-list" style="margin-top:6px"></div>
+      </div>
+
+      <div class="ai-box">
+        <div class="ai-box-title">🧕 Catatan Syekh Al-Fath</div>
+        <div class="ai-box-text" id="ortu-note">—</div>
+      </div>
+      <div class="sec-title">Progres Kebiasaan Hari Ini</div>
+      <div id="ortu-prog-list"></div>
+    </div>
+
+    <!-- SEKOLAH -->
+    <div class="tab-page" id="page-sekolah">
+      <div style="background:linear-gradient(135deg,#1A1A2E,#0F3460);padding:16px;border-radius:18px;margin-bottom:11px;color:#fff">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px">Dashboard Sekolah</div>
+        <div style="font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:18px;font-weight:900">SDIT Qudwatun Hasanah</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px" id="school-sub">—</div>
+      </div>
+      <div class="stats-grid2">
+        <div class="sstat"><div class="sstat-num" id="sc-s1">0</div><div class="sstat-lbl">Siswa aktif hari ini</div></div>
+        <div class="sstat"><div class="sstat-num" id="sc-s2">0%</div><div class="sstat-lbl">Rata-rata konsistensi</div></div>
+        <div class="sstat"><div class="sstat-num" id="sc-s3">0</div><div class="sstat-lbl">Total check-in hari ini</div></div>
+        <div class="sstat"><div class="sstat-num" id="sc-s4">0</div><div class="sstat-lbl">Siswa Tier Emas+</div></div>
+      </div>
+      <div class="ai-box">
+        <div class="ai-box-title">🧕 Syekh Al-Fath — Laporan Sekolah</div>
+        <div class="ai-box-text" id="school-ai">—</div>
+      </div>
+      <div class="lb-card">
+        <div class="lb-head">🏆 Papan Tier — Semua Siswa</div>
+        <div id="leaderboard"></div>
+      </div>
+      <!-- REKAP / SERTIFIKAT / NOTIF TABS -->
+      <div class="card" style="margin-bottom:0">
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <button onclick="showSchoolPanel('rekap')" id="btn-rekap"
+            style="flex:1;padding:9px 4px;border:1.5px solid var(--green);border-radius:9px;
+            background:var(--green-light);cursor:pointer;font-size:11px;font-weight:700;
+            font-family:var(--font-round);color:var(--green-dark)">📊 Rekap</button>
+          <button onclick="showSchoolPanel('sertifikat')" id="btn-sertifikat"
+            style="flex:1;padding:9px 4px;border:1.5px solid var(--border);border-radius:9px;
+            background:#fff;cursor:pointer;font-size:11px;font-weight:700;
+            font-family:var(--font-round);color:var(--muted)">🏅 Sertifikat</button>
+          <button onclick="showSchoolPanel('notif')" id="btn-notif"
+            style="flex:1;padding:9px 4px;border:1.5px solid var(--border);border-radius:9px;
+            background:#fff;cursor:pointer;font-size:11px;font-weight:700;
+            font-family:var(--font-round);color:var(--muted)">📨 Pesan</button>
+        </div>
+
+        <!-- REKAP PANEL -->
+        <div id="school-panel-rekap">
+          <div style="font-family:var(--font-round);font-size:12px;font-weight:800;
+            margin-bottom:8px;color:var(--text)">📊 Rekap Mingguan Kelas</div>
+          <div id="rekap-table-wrap"></div>
+          <div style="margin-top:10px;padding:10px;background:var(--green-light);
+            border-radius:10px;font-size:11px;color:var(--green-dark);line-height:1.7">
+            <strong>Catatan Syekh Al-Fath:</strong><br>
+            <span id="rekap-ai-note">Muat data kelas untuk melihat analisis.</span>
+          </div>
+        </div>
+
+        <!-- SERTIFIKAT PANEL -->
+        <div id="school-panel-sertifikat" style="display:none">
+          <div style="font-family:var(--font-round);font-size:12px;font-weight:800;
+            margin-bottom:8px">🏅 Sertifikat Digital Siswa Berprestasi</div>
+          <div id="sertifikat-list"></div>
+        </div>
+
+        <!-- NOTIF PANEL -->
+        <div id="school-panel-notif" style="display:none">
+          <div style="font-family:var(--font-round);font-size:12px;font-weight:800;
+            margin-bottom:8px">📨 Kirim Pesan ke Orang Tua</div>
+          <select id="notif-target" class="add-select" style="width:100%;margin-bottom:8px">
+            <option value="all">Semua Orang Tua (Broadcast)</option>
+            <option value="inactive">Orang tua siswa tidak aktif hari ini</option>
+            <option value="streak">Orang tua siswa streak 3+ hari (apresiasi)</option>
+            <option value="low">Orang tua siswa konsistensi di bawah 50%</option>
+          </select>
+          <textarea id="notif-msg" style="width:100%;height:90px;padding:10px;
+            border:1.5px solid var(--border);border-radius:10px;font-size:12px;
+            line-height:1.6;resize:none;outline:none;background:#FAFAFA;
+            font-family:var(--font-body)"
+            placeholder="Tulis pesan untuk orang tua siswa...">Assalamu'alaikum Bapak/Ibu, kami ingin menginformasikan perkembangan kebiasaan putra/putri Anda minggu ini melalui aplikasi HeroKu. Mohon pantau dan berikan semangat di rumah. Terima kasih.</textarea>
+          <button onclick="sendSchoolNotif()" style="width:100%;margin-top:8px;padding:12px;
+            background:var(--green);border:none;border-radius:10px;color:#fff;
+            font-family:var(--font-round);font-weight:800;font-size:13px;cursor:pointer">
+            📨 Kirim Pesan Sekarang
+          </button>
+          <div id="notif-result" style="margin-top:8px;font-size:11px;
+            color:var(--green-dark);text-align:center"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="tab-page" id="page-admin">
+      <div class="admin-hdr">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px">Panel Kepala Sekolah</div>
+        <div style="font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:18px;font-weight:900">Manajemen Siswa & Kelas</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6)">SDIT Qudwatun Hasanah</div>
+      </div>
+      <!-- ADD STUDENT CARD -->
+      <div class="card" style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="sec-title" style="margin:0">➕ Tambah Siswa</div>
+          <button onclick="toggleBulkMode()" id="bulk-toggle-btn"
+            style="font-size:11px;padding:4px 10px;border:1.5px solid var(--border);
+            border-radius:8px;background:#fff;cursor:pointer;color:var(--muted);
+            font-family:var(--font-round);font-weight:700">📋 Import Massal</button>
+        </div>
+        <div id="single-add-mode">
+          <input class="add-input" id="add-name" placeholder="Nama lengkap siswa"
+            oninput="autoFillNickname()">
+          <div class="add-row" style="gap:7px;margin-bottom:7px">
+            <input class="add-input" id="add-nickname" placeholder="Nama panggilan"
+              style="margin:0;flex:1">
+            <input class="add-input" id="add-age" placeholder="Usia" type="number"
+              min="6" max="18" style="margin:0;width:72px;flex:none">
+          </div>
+          <div class="add-row">
+            <select class="add-select" id="add-class">
+              <option value="Usman Bin Affan">Usman Bin Affan</option>
+              <option value="Umar Bin Khattab">Umar Bin Khattab</option>
+              <option value="Abu Bakar As Siddiq">Abu Bakar As Siddiq</option>
+              <option value="Ali Bin Abi Thalib">Ali Bin Abi Thalib</option>
+            </select>
+            <select class="add-select" id="add-av" style="max-width:68px">
+              <option>🦁</option><option>🌙</option><option>⚡</option><option>🌟</option>
+              <option>🏆</option><option>🦋</option><option>🐯</option><option>🌸</option>
+              <option>🦅</option><option>🌿</option><option>🦊</option><option>🐬</option>
+            </select>
+            <button class="btn-add" onclick="addStudent()">+ Tambah</button>
+          </div>
+          <div id="pin-preview" style="display:none;margin-top:8px;padding:8px 10px;
+            background:var(--green-light);border-radius:9px;font-size:12px;
+            color:var(--green-dark);font-weight:700;font-family:var(--font-round)">
+            🔑 PIN akan digenerate otomatis saat ditambahkan
+          </div>
+        </div>
+        <div id="bulk-add-mode" style="display:none">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6">
+            Tempel daftar nama (satu per baris). Format opsional:<br>
+            <code style="background:#F5F5F5;padding:2px 6px;border-radius:4px;font-size:10px">Nama Lengkap, Kelas, Usia</code>
+          </div>
+          <textarea id="bulk-text" style="width:100%;height:110px;padding:10px;
+            border:1.5px solid var(--border);border-radius:10px;font-size:12px;
+            line-height:1.7;resize:vertical;outline:none;background:#FAFAFA"
+            placeholder="Ahmad Badshah Al Fath, Usman Bin Affan, 10&#10;Siti Aisyah Putri, Umar Bin Khattab, 11&#10;Muhammad Rizki, Abu Bakar As Siddiq, 9"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <div style="font-size:10px;color:var(--muted);flex:1">Kelas default jika tidak ditulis:</div>
+            <select class="add-select" id="bulk-default-class" style="max-width:160px">
+              <option value="Usman Bin Affan">Usman Bin Affan</option>
+              <option value="Umar Bin Khattab">Umar Bin Khattab</option>
+              <option value="Abu Bakar As Siddiq">Abu Bakar As Siddiq</option>
+              <option value="Ali Bin Abi Thalib">Ali Bin Abi Thalib</option>
+            </select>
+            <button class="btn-add" onclick="bulkAddStudents()">Import</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+          <div class="sec-title" style="margin:0">Daftar Siswa (<span id="stu-count">0</span>)</div>
+        </div>
+        <div class="class-filter" id="class-filter"></div>
+        <div id="admin-list"></div>
+        <button class="btn-danger" onclick="doResetAll()">⚠️ Reset semua data ke nol</button>
+      </div>
+    </div>
+
+    <!-- PSIKOLOGI -->
+    <div class="tab-page" id="page-psikologi">
+      <div style="background:linear-gradient(135deg,#4A235A,#7B1FA2);
+        border-radius:18px;padding:14px 16px;margin-bottom:10px;color:#fff">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px">ANALISIS KARAKTER</div>
+        <div style="font-family:var(--font-round);font-size:18px;font-weight:900">
+          🧠 Profil Psikologis Kebiasaan
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px">
+          Panduan berbasis data kebiasaan nyata anak
+        </div>
+      </div>
+      <!-- Selector (for guru/kepsek) -->
+      <div id="psiko-selector" style="display:none;margin-bottom:10px">
+        <select id="psiko-student-select" class="add-select" style="width:100%"
+          onchange="renderPsikologi()">
+          <option value="">-- Pilih Siswa --</option>
+        </select>
+      </div>
+      <div id="psikologi-content"></div>
+    </div>
+
+    <!-- RACE TRACK -->
+    <div class="tab-page" id="page-race">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,#1A1A2E,#0F3460);
+        border-radius:18px;padding:14px 16px;margin-bottom:10px;color:#fff">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px">GRAND PRIX</div>
+        <div style="font-family:var(--font-round);font-size:18px;font-weight:900">
+          🏎️ Sirkuit Kelas — Balapan Kebiasaan
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px"
+          id="race-subtitle">SDIT Qudwatun Hasanah</div>
+      </div>
+      <!-- Race track rendered here -->
+      <div id="race-display"></div>
+      <!-- My position card -->
+      <div id="race-my-pos" style="display:none"></div>
+    </div>
+
+    <!-- TENTANG / ABOUT -->
+    <div class="tab-page" id="page-tentang">
+      <div style="background:linear-gradient(135deg,#1A1A2E,#0F3460);border-radius:18px;
+        padding:20px;margin-bottom:11px;color:#fff;text-align:center">
+        <div style="font-size:44px;margin-bottom:8px;animation:float 3s ease-in-out infinite">🏆</div>
+        <div style="font-family:var(--font-round);font-size:22px;font-weight:900;margin-bottom:4px">HeroKu</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.65);line-height:1.7">
+          Platform Gamifikasi Karakter Anak<br>berbasis Program Resmi Pemerintah Indonesia
+        </div>
+        <div style="margin-top:12px;background:rgba(255,255,255,0.08);border-radius:10px;
+          padding:8px 12px;font-size:11px;color:rgba(255,255,255,0.6)">
+          Versi Demo · SDIT Qudwatun Hasanah · 2025
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div class="sec-title" style="margin-bottom:10px">📊 Potensi Dampak Nasional</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:var(--green-light);border-radius:11px;padding:10px;text-align:center">
+            <div style="font-family:var(--font-round);font-size:20px;font-weight:900;color:var(--green-dark)">54 Juta</div>
+            <div style="font-size:10px;color:var(--green-dark);margin-top:2px">Siswa SD-SMP Indonesia</div>
+          </div>
+          <div style="background:#EEEDFE;border-radius:11px;padding:10px;text-align:center">
+            <div style="font-family:var(--font-round);font-size:20px;font-weight:900;color:#4A235A">7 Kebiasaan</div>
+            <div style="font-size:10px;color:#4A235A;margin-top:2px">Program Presiden RI</div>
+          </div>
+          <div style="background:#FEF9E7;border-radius:11px;padding:10px;text-align:center">
+            <div style="font-family:var(--font-round);font-size:20px;font-weight:900;color:#856404">200%</div>
+            <div style="font-size:10px;color:#856404;margin-top:2px">Peningkatan retensi dengan gamifikasi</div>
+          </div>
+          <div style="background:#EAF3DE;border-radius:11px;padding:10px;text-align:center">
+            <div style="font-family:var(--font-round);font-size:20px;font-weight:900;color:#27500A">Gratis</div>
+            <div style="font-size:10px;color:#27500A;margin-top:2px">Untuk sekolah pilot pertama</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div class="sec-title" style="margin-bottom:10px">✨ Fitur Unggulan</div>
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">🗺️</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">Progress Map Interaktif</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">Peta perjalanan pribadi dengan mobil avatar bergerak real-time</div>
+  </div>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">🏎️</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">Grand Prix Kelas</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">Sirkuit balap kelas yang memperlihatkan posisi setiap siswa</div>
+  </div>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">🧕</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">AI Mentor Syekh Al-Fath</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">Bimbingan personal harian berbasis riwayat kebiasaan anak</div>
+  </div>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">📖</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">Kartu Islami Koleksi</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">9 kartu dengan hadis dan ayat Al-Quran yang bisa dikoleksi</div>
+  </div>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">🧠</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">Kuis Harian</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">Al-Quran, Bahasa Inggris, dan matematika setelah sesi selesai</div>
+  </div>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">🔧</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">Garasi Modifikasi</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">Customisasi mobil dengan koin dari kebiasaan baik</div>
+  </div>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">👨‍👩‍👧</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">Verifikasi Orang Tua</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">Konfirmasi kebiasaan yang tidak bisa diverifikasi mandiri</div>
+  </div>
+</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+  <span style="font-size:20px;flex-shrink:0">🏫</span>
+  <div>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;margin-bottom:1px">Dashboard Sekolah</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.5">Kepala sekolah dan guru pantau semua kelas real-time</div>
+  </div>
+</div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div class="sec-title" style="margin-bottom:10px">🚀 Roadmap Pengembangan</div>
+        <div style="background:#EAF9F0;border-radius:10px;padding:10px 12px;margin-bottom:6px">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+    <span style="font-size:14px">✅</span>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;color:#1E8449">Fase 1 — Selesai</div>
+  </div>
+  <div style="font-size:11px;color:#1E8449;line-height:1.5;opacity:0.85">MVP: Login PIN, 7 kebiasaan, progress map, garasi, kuis</div>
+</div>
+<div style="background:#EEEDFE;border-radius:10px;padding:10px 12px;margin-bottom:6px">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+    <span style="font-size:14px">🔄</span>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;color:#4A235A">Fase 2 — 3 Bulan</div>
+  </div>
+  <div style="font-size:11px;color:#4A235A;line-height:1.5;opacity:0.85">App Android/iOS, database Supabase, AI Mentor Claude API live</div>
+</div>
+<div style="background:#FEF9E7;border-radius:10px;padding:10px 12px;margin-bottom:6px">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+    <span style="font-size:14px">⏳</span>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;color:#856404">Fase 3 — 6 Bulan</div>
+  </div>
+  <div style="font-size:11px;color:#856404;line-height:1.5;opacity:0.85">Multi-sekolah, laporan PDF, sertifikat digital, B2G</div>
+</div>
+<div style="background:#EAF3DE;border-radius:10px;padding:10px 12px;margin-bottom:6px">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+    <span style="font-size:14px">🎯</span>
+    <div style="font-family:var(--font-round);font-size:12px;font-weight:800;color:#27500A">Fase 4 — 12 Bulan</div>
+  </div>
+  <div style="font-size:11px;color:#27500A;line-height:1.5;opacity:0.85">Platform nasional, Kemendikbud, 1 juta siswa aktif</div>
+</div>
+      </div>
+
+      <div style="text-align:center;padding:12px 0 8px;color:var(--muted);font-size:11px;line-height:1.8">
+        Dikembangkan untuk SDIT Qudwatun Hasanah<br>
+        Sejalan dengan Kurikulum Merdeka dan Program 7 Kebiasaan<br>
+        <span style="font-size:20px;display:block;margin-top:8px">🇮🇩 ☪️ 🏆</span>
+      </div>
+    </div>
+
+    <!-- GARASI -->
+    <div class="tab-page" id="page-garasi">
+      <div style="background:linear-gradient(135deg,#1A1A2E,#2C3E50);padding:16px;border-radius:18px;margin-bottom:11px;color:#fff">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px">GARASI PRIBADI</div>
+        <div style="font-family:var(--font-round);font-size:18px;font-weight:900">Modifikasi Mobilmu 🏎️</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px">Gunakan Koin untuk upgrade tampilan mobilmu di kelas!</div>
+      </div>
+      <div id="garasi-car-preview" style="background:linear-gradient(135deg,#2D3436,#636E72);border-radius:18px;padding:20px;text-align:center;margin-bottom:10px">
+        <div id="garasi-car-display" style="font-size:80px;margin-bottom:8px;transition:all 0.3s">🚗</div>
+        <div id="garasi-car-name" style="font-family:var(--font-round);font-size:14px;font-weight:800;color:#fff;margin-bottom:4px">Mobilmu</div>
+        <div id="garasi-car-mods" style="font-size:11px;color:rgba(255,255,255,0.6)">Belum ada modifikasi</div>
+        <div id="garasi-koin-display" style="margin-top:8px;background:rgba(255,255,255,0.1);border-radius:10px;padding:6px 12px;display:inline-block;font-family:var(--font-round);font-size:13px;font-weight:800;color:#FFE066">⭐ 0 Koin tersisa</div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="sec-title">🎨 Warna Cat Mobil</div>
+        <div id="garasi-colors" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      </div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="sec-title">🏷️ Stiker & Aksesori</div>
+        <div id="garasi-stickers" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+      </div>
+      <div class="card">
+        <div class="sec-title">🚀 Upgrade Performa</div>
+        <div id="garasi-upgrades" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav" id="bottom-nav-bar"></div>
+</div>
+
+
+<!-- Library Supabase (resmi dari CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Data statis (kebiasaan, badge, archetipe, dll) -->
+<script src="js/data.js"></script>
+
+<!-- Adapter Supabase: berisi fungsi loadStoreFromSupabase() & saveStoreToSupabase() -->
+<script src="js/supabase-sync.js"></script>
+
+<!-- Logika utama aplikasi (mendefinisikan variabel STORE) -->
+<script src="js/app.js"></script>
+
+<!-- Jembatan: override saveStore(), lalu jalankan bootApp() untuk
+     mengambil data awal dari Supabase setelah STORE sudah ada -->
+<script src="js/bridge.js"></script>
+</body>
+</html>

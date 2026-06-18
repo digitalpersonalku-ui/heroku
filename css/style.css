@@ -1,0 +1,316 @@
+
+/* Self-contained font stack — works offline & file:// */
+:root {
+  --font-round: 'Varela Round', 'Trebuchet MS', 'Comic Sans MS', 'Segoe UI', Arial, sans-serif;
+  --font-body:  'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+body { font-family: var(--font-body); }
+/* Simulate Nunito-style rounded font with system fonts */
+.nunito-style, h1, h2, h3,
+[style*="Nunito"],
+[style*="nunito"] {
+  font-family: var(--font-round) !important;
+}
+
+    /* === HABIT CARD KEYFRAMES (moved from JS) === */
+    @keyframes run{0%{transform:scaleX(1) translateY(0)}50%{transform:scaleX(1) translateY(-4px)}}
+@keyframes ibadahPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08) translateY(-4px)}}
+@keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+    @keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+@keyframes bookOpen{0%,100%{transform:rotate(-3deg) scale(1)}50%{transform:rotate(3deg) scale(1.05)}}
+    @keyframes twinkle{from{opacity:0.3;transform:scale(0.8)}to{opacity:1;transform:scale(1.2)}}
+@keyframes bounce2{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+    /* tidur keyframes */
+    @keyframes sleepAnim{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+        @keyframes twinkle2{0%,100%{opacity:0.2;transform:scale(0.7)}50%{opacity:1;transform:scale(1)}}
+        @keyframes floatZ{0%{transform:translateY(0) scale(1);opacity:0.6}100%{transform:translateY(-30px) scale(1.5);opacity:0}}
+
+
+
+:root{
+  --green:#2ECC71;--green-dark:#27AE60;--green-light:#EAFAF1;
+  --gold:#F1C40F;--silver:#BDC3C7;--bronze:#CD7F32;--diamond:#74B9FF;
+  --amber:#F39C12;--purple:#8E44AD;--blue:#3498DB;--coral:#E74C3C;
+  --dark:#1A1A2E;--white:#FFFFFF;--bg:#F0FBF4;
+  --text:#1A1A2E;--muted:#7F8C8D;--border:#E8E8E8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body,'Segoe UI',Arial,sans-serif);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── LOGIN ── */
+#screen-login{background:linear-gradient(160deg,#1A1A2E,#16213E,#0F3460);align-items:center;justify-content:center;padding:1.5rem}
+.login-logo{text-align:center;margin-bottom:1.5rem}
+.logo-icon{font-size:64px;display:block;filter:drop-shadow(0 4px 16px rgba(46,204,113,0.5));animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.logo-title{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:34px;font-weight:900;color:#fff;letter-spacing:-1px}
+.logo-school{color:#9FE1CB;font-size:12px;margin-top:3px}
+.login-box{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);border-radius:22px;padding:1.5rem;width:100%;max-width:360px}
+.login-section-label{font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:700}
+.pin-hint{font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:10px;line-height:1.5}
+.pin-input-wrap{display:flex;gap:8px;justify-content:center;margin-bottom:12px}
+.pin-digit{width:44px;height:52px;border:2px solid rgba(255,255,255,0.2);border-radius:12px;background:rgba(255,255,255,0.07);color:#fff;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:22px;font-weight:900;text-align:center;outline:none;transition:border-color 0.2s;-webkit-text-security:disc}
+.pin-digit:focus{border-color:var(--green)}
+.btn-go{width:100%;padding:13px;background:var(--green);border:none;border-radius:13px;color:#fff;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:900;font-size:15px;cursor:pointer;transition:all 0.2s;margin-bottom:8px}
+.btn-go:hover{background:var(--green-dark);transform:translateY(-1px)}
+.pin-error{color:#FF7675;font-size:11px;text-align:center;min-height:16px;margin-bottom:6px}
+.divider-or{display:flex;align-items:center;gap:10px;margin:10px 0;color:rgba(255,255,255,0.3);font-size:11px}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.15)}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.role-btn{padding:9px 6px;border:1.5px solid rgba(255,255,255,0.12);border-radius:11px;background:transparent;color:rgba(255,255,255,0.65);cursor:pointer;text-align:center;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:700;font-size:11px;transition:all 0.2s}
+.role-btn .ri{font-size:20px;display:block;margin-bottom:2px}
+.role-btn.selected,.role-btn:hover{border-color:var(--green);background:rgba(46,204,113,0.12);color:#fff}
+.login-input{width:100%;padding:10px 13px;border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;background:rgba(255,255,255,0.07);color:#fff;font-size:13px;margin-bottom:7px;outline:none;transition:border-color 0.2s}
+.login-input::placeholder{color:rgba(255,255,255,0.3)}
+.login-input:focus{border-color:var(--green)}
+.hint-text{color:rgba(255,255,255,0.3);font-size:10px;text-align:center;margin-top:4px}
+
+/* ── TOPBAR ── */
+.topbar{background:#fff;padding:11px 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:900;font-size:19px;color:var(--green-dark)}
+.topbar-right{display:flex;align-items:center;gap:7px}
+.topbar-av{width:33px;height:33px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid var(--green)}
+.topbar-name{font-size:12px;font-weight:700}
+.topbar-sub{font-size:10px;color:var(--muted)}
+.tier-pill{border-radius:20px;padding:3px 9px;font-size:11px;font-weight:800;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{background:#fff;border-top:1px solid var(--border);display:flex;padding:5px 0 10px;position:sticky;bottom:0;z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px;transition:all 0.15s}
+.nav-icon{font-size:20px;transition:transform 0.2s}
+.nav-label{font-size:9px;font-weight:700;color:var(--muted);font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif)}
+.nav-item.active .nav-icon{transform:scale(1.15)}
+.nav-item.active .nav-label{color:var(--green-dark)}
+
+/* ── CONTENT ── */
+.main{flex:1;overflow-y:auto;padding:13px;max-width:480px;margin:0 auto;width:100%}
+.tab-page{display:none}.tab-page.active{display:block}
+.card{background:#fff;border-radius:14px;padding:13px 15px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.05);border:1px solid var(--border)}
+.sec-title{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:14px;font-weight:800;margin-bottom:9px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#1A1A2E,#0F3460);border-radius:20px;padding:16px;margin-bottom:11px;color:#fff;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-20px;right:-20px;width:90px;height:90px;background:rgba(46,204,113,0.12);border-radius:50%}
+.hero-greeting{font-size:11px;color:rgba(255,255,255,0.55)}
+.hero-name{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:20px;font-weight:900;margin-bottom:10px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.hstat{background:rgba(255,255,255,0.09);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px}
+.hstat-icon{font-size:20px}
+.hstat-num{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:22px;font-weight:900;color:var(--green);line-height:1}
+.hstat-label{font-size:9px;color:rgba(255,255,255,0.55)}
+.xp-label{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.55);margin-bottom:4px}
+.xp-bar{height:7px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--green),#52D98A);border-radius:4px;transition:width 0.5s ease}
+
+/* ── TIER BADGE ── */
+.tier-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:11px;font-weight:800;margin-bottom:10px}
+
+/* ── STREAK ── */
+.streak-row{display:flex;gap:5px;margin-bottom:11px}
+.sday{flex:1;aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8px;font-weight:800;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);border:2px solid transparent}
+.sday.done{background:var(--green);color:#fff}
+.sday.today{background:#fff;border-color:var(--green);color:var(--green-dark)}
+.sday.empty{background:#fff;color:var(--muted);border-color:var(--border)}
+
+/* ── HABITS ── */
+.habit-card{background:#fff;border-radius:15px;padding:11px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all 0.2s;border:2px solid transparent;box-shadow:0 2px 7px rgba(0,0,0,0.05);margin-bottom:7px}
+.habit-card:hover{transform:translateX(2px)}
+.habit-card.checked{border-color:var(--green);background:var(--green-light)}
+.habit-card.checked .hchk{background:var(--green);border-color:var(--green);color:#fff}
+.h-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.h-info{flex:1;min-width:0}
+.h-name{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:800;font-size:13px;margin-bottom:1px}
+.h-desc{font-size:10px;color:var(--muted)}
+.h-reward{font-size:10px;font-weight:700;color:var(--green-dark);margin-top:2px}
+.hchk{width:26px;height:26px;border-radius:50%;border:2.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.25s;font-size:13px}
+
+/* ── MENTOR ── */
+.mentor-card{background:#fff;border-radius:15px;padding:13px;margin-bottom:11px;border-left:4px solid var(--green);box-shadow:0 2px 7px rgba(0,0,0,0.05)}
+.mentor-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.mentor-av{width:36px;height:36px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:19px}
+.mentor-name{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:12px;font-weight:800;color:var(--green-dark)}
+.mentor-sub{font-size:9px;color:var(--muted)}
+.mentor-msg{font-size:12px;line-height:1.7;color:var(--text)}
+.mentor-ortu-note{background:#FFF8E7;border-radius:9px;padding:8px 10px;margin-top:8px;font-size:11px;color:#856404;border-left:3px solid var(--amber)}
+
+/* ── WORLD ── */
+.world-card{background:linear-gradient(160deg,#87CEEB,#98D9A0,#5DAE6B);border-radius:20px;padding:16px;margin-bottom:11px;position:relative;overflow:hidden;min-height:140px}
+.world-empty{background:linear-gradient(160deg,#C8E6F7,#D4EDDA);border-radius:20px;padding:22px;margin-bottom:11px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wb{text-align:center;cursor:pointer;transition:transform 0.2s}
+.wb:hover{transform:scale(1.1) translateY(-2px)}
+.wb.locked{opacity:0.3;filter:grayscale(1)}
+
+/* ── BADGES ── */
+.badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:11px}
+.badge-item{background:#fff;border-radius:11px;padding:7px 4px;text-align:center;box-shadow:0 2px 5px rgba(0,0,0,0.05);border:1px solid var(--border)}
+.badge-item.locked{opacity:0.3;filter:grayscale(0.8)}
+.badge-item.unlocked{background:linear-gradient(135deg,#FEF9E7,#FDEBD0);border-color:#F9CA75}
+
+/* ── CARDS COLLECTION ── */
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+.coll-card{border-radius:14px;padding:10px 6px;text-align:center;cursor:pointer;transition:transform 0.2s;position:relative;overflow:hidden;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,0.1)}
+.coll-card:hover{transform:scale(1.05)}
+.coll-card.locked{background:linear-gradient(135deg,#2D3436,#636E72);opacity:0.4;filter:grayscale(0.7)}
+.coll-card .cc-icon{font-size:28px;margin-bottom:4px}
+.coll-card .cc-name{font-size:8px;font-weight:800;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);color:rgba(255,255,255,0.9);line-height:1.2}
+.coll-card .cc-rarity{font-size:8px;color:rgba(255,255,255,0.6);margin-top:2px}
+
+/* ── SCHOOL & PARENT DASH ── */
+.stat-big{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:28px;font-weight:900;line-height:1}
+.stats-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.sstat{background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+.sstat-num{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:26px;font-weight:900;color:#1A1A2E;line-height:1}
+.sstat-lbl{font-size:10px;color:var(--muted);margin-top:3px}
+.prog-row{background:#fff;border-radius:10px;padding:9px 11px;box-shadow:0 1px 4px rgba(0,0,0,0.04);margin-bottom:7px}
+.prog-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.prog-name{font-size:11px;font-weight:700;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif)}
+.prog-val{font-size:11px;font-weight:800;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif)}
+.prog-bar{height:6px;background:#F0F0F0;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.ai-box{background:linear-gradient(135deg,#EAF9F0,#D5F5E3);border-radius:13px;padding:11px;margin-bottom:11px;border-left:4px solid var(--green)}
+.ai-box-title{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:11px;font-weight:800;color:var(--green-dark);margin-bottom:4px}
+.ai-box-text{font-size:11px;line-height:1.7;color:#1E8449}
+.lb-card{background:#fff;border-radius:13px;overflow:hidden;margin-bottom:11px;box-shadow:0 2px 7px rgba(0,0,0,0.05)}
+.lb-head{padding:10px 13px;border-bottom:1px solid var(--border);font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:13px;font-weight:800}
+.lb-row{display:flex;align-items:center;gap:9px;padding:8px 13px;border-bottom:1px solid #F9F9F9}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{width:20px;font-size:11px;font-weight:900;color:var(--muted);text-align:center;flex-shrink:0}
+.lb-av{font-size:20px;width:28px;text-align:center;flex-shrink:0}
+.lb-info{flex:1}
+.lb-name{font-weight:700;font-size:12px}
+.lb-class{font-size:9px;color:var(--muted)}
+.lb-score{text-align:right}
+.lb-pts{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:12px;font-weight:900;color:#1A1A2E}
+.lb-tier{font-size:10px;font-weight:700}
+
+/* ── ADMIN ── */
+.admin-hdr{background:linear-gradient(135deg,#1A1A2E,#0F3460);padding:16px;border-radius:18px;margin-bottom:11px;color:#fff}
+.add-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;background:#FAFAFA;outline:none;margin-bottom:7px;transition:border-color 0.2s}
+.add-input:focus{border-color:var(--green)}
+.add-row{display:flex;gap:7px;margin-bottom:7px}
+.add-select{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;background:#FAFAFA;outline:none;cursor:pointer}
+.btn-add{padding:9px 14px;background:var(--green);border:none;border-radius:9px;color:#fff;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap}
+.student-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)}
+.student-row:last-child{border-bottom:none}
+.sr-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.sr-info{flex:1}
+.sr-name{font-size:12px;font-weight:700}
+.sr-sub{font-size:10px;color:var(--muted)}
+.sr-pin{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:13px;font-weight:900;color:var(--green-dark);letter-spacing:2px}
+.btn-del{background:none;border:none;cursor:pointer;font-size:14px;opacity:0.4;padding:3px;transition:opacity 0.2s}
+.btn-del:hover{opacity:1}
+.class-filter{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.cls-chip{padding:3px 9px;border:1.5px solid var(--border);border-radius:20px;font-size:10px;cursor:pointer;font-weight:600;transition:all 0.15s;background:#fff}
+.cls-chip.active{background:var(--green);border-color:var(--green);color:#fff}
+.btn-danger{width:100%;padding:9px;background:none;border:2px solid #FFB3B3;border-radius:9px;color:var(--coral);font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:700;font-size:11px;cursor:pointer;margin-top:4px}
+
+/* ── OVERLAY SCREENS ── */
+.overlay{display:none;position:fixed;inset:0;z-index:300;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+.overlay.open{display:flex}
+
+/* CELEBRATION */
+#overlay-celebrate{background:linear-gradient(160deg,#1A1A2E,#0F3460);text-align:center}
+.celebrate-emoji{font-size:72px;display:block;animation:celebBounce 0.6s ease-out;margin-bottom:12px}
+@keyframes celebBounce{0%{transform:scale(0) rotate(-10deg)}60%{transform:scale(1.15) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
+.celebrate-title{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:24px;font-weight:900;color:#fff;margin-bottom:6px}
+.celebrate-sub{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6;margin-bottom:20px}
+.celebrate-building{font-size:48px;margin-bottom:8px;animation:float 2s ease-in-out infinite}
+.celebrate-building-name{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:16px;font-weight:800;color:var(--green);margin-bottom:20px}
+.confetti-row{display:flex;justify-content:center;gap:8px;margin-bottom:20px;font-size:22px}
+.btn-next{padding:13px 32px;background:var(--green);border:none;border-radius:14px;color:#fff;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:900;font-size:15px;cursor:pointer;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,0.4)}50%{box-shadow:0 0 0 12px rgba(46,204,113,0)}}
+
+/* CARD REVEAL */
+#overlay-card{background:linear-gradient(160deg,#4A0E8F,#7B1FA2);text-align:center}
+.card-reveal-label{font-size:11px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.big-card{width:200px;border-radius:22px;padding:20px 14px;margin:0 auto 16px;box-shadow:0 8px 32px rgba(0,0,0,0.4);position:relative;overflow:hidden;animation:cardFlip 0.6s ease-out}
+@keyframes cardFlip{from{transform:rotateY(90deg) scale(0.8)}to{transform:rotateY(0) scale(1)}}
+.big-card .bc-icon{font-size:52px;display:block;margin-bottom:10px}
+.big-card .bc-name{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:16px;font-weight:900;color:#fff;margin-bottom:4px}
+.big-card .bc-quote{font-size:11px;color:rgba(255,255,255,0.75);line-height:1.5;font-style:italic}
+.big-card .bc-rarity{position:absolute;top:10px;right:10px;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;background:rgba(255,255,255,0.2);color:#fff}
+.card-flavor{font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:20px}
+
+.welcome-feat{display:flex;align-items:flex-start;gap:12px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:14px;padding:12px 14px;text-align:left}
+
+/* ═══ GARASI ═══ */
+.color-swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.2s;border:3px solid transparent;flex-shrink:0}
+.color-swatch:hover{transform:scale(1.15)}
+.color-swatch.selected{border-color:#FFE066;box-shadow:0 0 0 3px rgba(255,230,0,0.4)}
+.shop-item{border:1.5px solid var(--border);border-radius:12px;padding:10px;
+  background:#fff;cursor:pointer;transition:all 0.2s;text-align:center;position:relative}
+.shop-item:hover{border-color:var(--green);background:var(--green-light)}
+.shop-item.owned{border-color:var(--green);background:var(--green-light)}
+.shop-item.equipped{border-color:#FFE066;background:#FFFDE7;box-shadow:0 0 0 2px rgba(255,230,0,0.3)}
+.shop-item .item-icon{font-size:28px;display:block;margin-bottom:4px}
+.shop-item .item-name{font-size:11px;font-weight:700;font-family:var(--font-round);margin-bottom:2px}
+.shop-item .item-price{font-size:10px;color:var(--green-dark);font-weight:800}
+.shop-item .item-badge{position:absolute;top:5px;right:5px;font-size:8px;
+  padding:2px 5px;border-radius:10px;font-weight:800;font-family:var(--font-round)}
+
+/* ═══ GRAND PRIX RACE TRACK ═══ */
+.race-track-wrap{border-radius:16px;overflow:hidden;margin-bottom:10px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+@keyframes exhaustPuff{0%{transform:scale(0.5) translateX(0);opacity:0.8}
+  100%{transform:scale(1.5) translateX(-20px);opacity:0}}
+@keyframes nitroFlame{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(1.4);opacity:0.7}}
+@keyframes raceFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes laserShoot{0%{opacity:0;transform:scaleX(0)}30%{opacity:1;transform:scaleX(1)}
+  70%{opacity:1}100%{opacity:0;transform:scaleX(1) translateX(20px)}}
+@keyframes buildingAppear{0%{opacity:0;transform:scale(0.3) rotate(-10deg)}
+  60%{transform:scale(1.15) rotate(3deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes weatherRain{0%{transform:translateY(-10px);opacity:0}
+  100%{transform:translateY(20px);opacity:0.6}}
+@keyframes rainbowFade{0%,100%{opacity:0.6}50%{opacity:1}}
+
+/* MISSION CARD */
+@keyframes cardEntrance{from{transform:scale(0.7) translateY(60px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+@keyframes iconFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    @keyframes gpShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes coinFly{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-120px) scale(0.3);opacity:0}}
+@keyframes particlePop{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+.gold-shimmer{background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.3) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 2s linear infinite}
+
+/* BUILDING UNLOCK */
+/* BUILDING UNLOCK */
+#overlay-building{background:linear-gradient(160deg,#0A3D0A,#1A6B1A,#27AE60);text-align:center}
+.bu-stars{font-size:28px;letter-spacing:4px;margin-bottom:8px;animation:starPop 0.5s ease-out}
+@keyframes starPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.bu-icon-wrap{position:relative;display:inline-block;margin-bottom:12px}
+.bu-icon{font-size:96px;display:block;animation:buildingDrop 0.6s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes buildingDrop{from{transform:scale(0) translateY(-40px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.bu-rays{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;background:radial-gradient(circle,rgba(255,255,255,0.25) 0%,transparent 70%);border-radius:50%;animation:rayPulse 1.5s ease-in-out infinite}
+@keyframes rayPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.6}50%{transform:translate(-50%,-50%) scale(1.3);opacity:0.2}}
+.bu-label{font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;font-weight:700}
+.bu-name{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;text-shadow:0 2px 12px rgba(0,0,0,0.3)}
+.bu-desc{font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:6px}
+.bu-hadis{background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;margin:10px 0 16px;font-size:12px;color:rgba(255,255,255,0.85);line-height:1.7;font-style:italic;border-left:3px solid rgba(255,255,255,0.4)}
+.bu-koin-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.15);border-radius:20px;padding:5px 14px;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:13px;font-weight:800;color:#fff;margin-bottom:16px}
+.bu-confetti{display:flex;justify-content:center;gap:6px;font-size:20px;margin-bottom:16px;animation:confettiFloat 2s ease-in-out infinite}
+@keyframes confettiFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* QUIZ */
+/* QUIZ */
+#overlay-quiz{background:linear-gradient(160deg,#0F3460,#1E6B9E);text-align:center}
+.quiz-label{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.quiz-question{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:18px;font-weight:800;color:#fff;margin-bottom:6px;line-height:1.4}
+.quiz-sub{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:20px}
+.quiz-options{display:flex;flex-direction:column;gap:9px;margin-bottom:16px;width:100%;max-width:320px}
+.quiz-opt{padding:13px 16px;border:2px solid rgba(255,255,255,0.2);border-radius:13px;background:rgba(255,255,255,0.07);color:#fff;cursor:pointer;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-weight:700;font-size:14px;transition:all 0.2s;text-align:center}
+.quiz-opt:hover{border-color:var(--green);background:rgba(46,204,113,0.15)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(46,204,113,0.25);animation:correctPop 0.3s ease}
+.quiz-opt.wrong{border-color:var(--coral);background:rgba(231,76,60,0.2)}
+@keyframes correctPop{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.quiz-result{font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);font-size:16px;font-weight:900;margin-bottom:6px;min-height:24px}
+.quiz-result-sub{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:16px}
+.quiz-reward{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:16px;min-height:20px}
+
+/* TOAST */
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-70px);background:var(--dark);color:#fff;padding:9px 16px;border-radius:40px;font-size:12px;font-weight:700;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);z-index:9999;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.toast.show{transform:translateX(-50%) translateY(0)}
