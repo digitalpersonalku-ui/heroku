@@ -10,13 +10,13 @@
 
 // ── KONFIGURASI — ISI DENGAN DATA SUPABASE ANDA ──
 // Cara dapatkan: Supabase Dashboard → Project Settings → API
-const SUPABASE_URL = 'GANTI_DENGAN_PROJECT_URL_ANDA';        // contoh: https://xxxxx.supabase.co
-const SUPABASE_ANON_KEY = 'GANTI_DENGAN_ANON_KEY_ANDA';       // kunci publik "anon" / "public"
+const SUPABASE_URL = 'https://gvuwmtzaewjfrkphmsbm.supabase.co';        // contoh: https://xxxxx.supabase.co
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dXdtdHphZXdqZnJrcGhtc2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTc4NjksImV4cCI6MjA5NzMzMzg2OX0.IdEsldQ7cweSbJD_ZEGbLLUVsP62rOHcFORIQ8Yd5ZU';       // kunci publik "anon" / "public"
 
 // ── INISIALISASI KLIEN SUPABASE ──
 // (Library Supabase dimuat lewat <script> CDN di index.html)
 const sbClient = window.supabase
-  ? window.supabase.createClient(https://gvuwmtzaewjfrkphmsbm.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dXdtdHphZXdqZnJrcGhtc2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTc4NjksImV4cCI6MjA5NzMzMzg2OX0.IdEsldQ7cweSbJD_ZEGbLLUVsP62rOHcFORIQ8Yd5ZU)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
 
 let SUPABASE_READY = false;
