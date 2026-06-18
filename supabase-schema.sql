@@ -139,3 +139,22 @@ insert into app_store (key, value) values ('next_id', '5'::jsonb);
 -- select * from students;
 -- select * from staff_accounts;
 -- ═══════════════════════════════════════════════════════════
+
+-- ═══════════════════════════════════════════════════════════
+-- MIGRASI TAHAP 1: KELOMPOK USIA & TEMA VISUAL
+-- Jalankan blok ini di SQL Editor Supabase (terpisah dari skema awal)
+-- ═══════════════════════════════════════════════════════════
+
+-- Kolom untuk preferensi tema manual (override).
+-- NULL = pakai default otomatis dari usia. Diisi 'muda'/'menengah'/'dewasa' jika siswa pilih sendiri.
+alter table students add column if not exists theme_override text;
+
+-- Catatan: kelompok usia TIDAK disimpan sebagai kolom terpisah,
+-- karena bisa dihitung langsung dari kolom 'age' yang sudah ada:
+--   age 6-8   -> kelompok 'muda'
+--   age 9-11  -> kelompok 'menengah'
+--   age 12-15 -> kelompok 'dewasa'
+-- Ini menghindari data tidak konsisten jika usia diubah tapi kelompok lupa diupdate.
+
+-- Verifikasi:
+-- select id, name, age, theme_override from students;
