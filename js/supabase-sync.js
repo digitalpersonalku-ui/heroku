@@ -14,7 +14,7 @@
 // ║  JANGAN sampai file ini diupload masih dengan teks          ║
 // ║  'GANTI_DENGAN...' — aplikasi tidak akan bisa konek ke DB.  ║
 // ╚═══════════════════════════════════════════════════════════╝
-const SUPABASE_URL = 'https://gvuwmtzaewjfrkphmsbm.supabase.co';        // contoh: https://xxxxx.supabase.co
+const SUPABASE_URL = 'https://gvuwmtzaewjfrkphmsbm.supabase.co';     // contoh: https://xxxxx.supabase.co
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dXdtdHphZXdqZnJrcGhtc2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTc4NjksImV4cCI6MjA5NzMzMzg2OX0.IdEsldQ7cweSbJD_ZEGbLLUVsP62rOHcFORIQ8Yd5ZU';       // kunci publik "anon" / "public"
 // ╔═══════════════════════════════════════════════════════════╗
 // ║  Berhenti edit di sini — bagian di bawah TIDAK perlu        ║
