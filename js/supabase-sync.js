@@ -14,8 +14,8 @@
 // ║  JANGAN sampai file ini diupload masih dengan teks          ║
 // ║  'GANTI_DENGAN...' — aplikasi tidak akan bisa konek ke DB.  ║
 // ╚═══════════════════════════════════════════════════════════╝
-const SUPABASE_URL = 'https://gvuwmtzaewjfrkphmsbm.supabase.co';        // contoh: https://xxxxx.supabase.co
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dXdtdHphZXdqZnJrcGhtc2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTc4NjksImV4cCI6MjA5NzMzMzg2OX0.IdEsldQ7cweSbJD_ZEGbLLUVsP62rOHcFORIQ8Yd5ZU';       // kunci publik "anon" / "public"
+const SUPABASE_URL = 'GANTI_DENGAN_PROJECT_URL_ANDA';        // contoh: https://xxxxx.supabase.co
+const SUPABASE_ANON_KEY = 'GANTI_DENGAN_ANON_KEY_ANDA';       // kunci publik "anon" / "public"
 // ╔═══════════════════════════════════════════════════════════╗
 // ║  Berhenti edit di sini — bagian di bawah TIDAK perlu        ║
 // ║  diubah, biarkan apa adanya.                                ║
@@ -209,4 +209,132 @@ function showSupabaseStatus() {
   }
   document.body.appendChild(badge);
   setTimeout(() => { badge.style.opacity = '0'; setTimeout(() => badge.remove(), 300); }, 4000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAPAN TANTANGAN DARI GURU — fungsi sync ke tabel teacher_quizzes
+// Ditambahkan di akhir file supaya tidak mengganggu konfigurasi
+// SUPABASE_URL/SUPABASE_ANON_KEY di bagian atas file.
+// ═══════════════════════════════════════════════════════════
+
+// Ambil semua soal aktif untuk satu kelas tertentu
+async function loadTeacherQuizzes(kelas){
+  if(!sbClient) return [];
+  try{
+    const { data, error } = await sbClient
+      .from('teacher_quizzes')
+      .select('*')
+      .eq('kelas', kelas)
+      .eq('is_active', true)
+      .order('created_at', { ascending:false });
+    if(error) throw error;
+    return (data||[]).map(q => ({
+      id: q.id, teacherId: q.teacher_id, kelas: q.kelas,
+      category: q.category, ageGroup: q.age_group,
+      question: q.question,
+      options: [q.option_a, q.option_b, q.option_c, q.option_d],
+      correctAnswer: q.correct_answer, bonusKoin: q.bonus_koin,
+    }));
+  }catch(e){
+    console.error('[Supabase] loadTeacherQuizzes error:', e);
+    return [];
+  }
+}
+
+// Ambil SEMUA soal buatan guru tertentu (termasuk non-aktif), untuk halaman kelola guru
+async function loadTeacherQuizzesByTeacher(teacherId){
+  if(!sbClient) return [];
+  try{
+    const { data, error } = await sbClient
+      .from('teacher_quizzes')
+      .select('*')
+      .eq('teacher_id', teacherId)
+      .order('created_at', { ascending:false });
+    if(error) throw error;
+    return (data||[]).map(q => ({
+      id: q.id, teacherId: q.teacher_id, kelas: q.kelas,
+      category: q.category, ageGroup: q.age_group,
+      question: q.question,
+      options: [q.option_a, q.option_b, q.option_c, q.option_d],
+      correctAnswer: q.correct_answer, bonusKoin: q.bonus_koin,
+      isActive: q.is_active,
+    }));
+  }catch(e){
+    console.error('[Supabase] loadTeacherQuizzesByTeacher error:', e);
+    return [];
+  }
+}
+
+// Simpan soal baru dari guru
+async function saveTeacherQuiz(quizData){
+  if(!sbClient) return null;
+  try{
+    const { data, error } = await sbClient
+      .from('teacher_quizzes')
+      .insert({
+        teacher_id: quizData.teacherId,
+        kelas: quizData.kelas,
+        category: quizData.category,
+        age_group: quizData.ageGroup,
+        question: quizData.question,
+        option_a: quizData.options[0],
+        option_b: quizData.options[1],
+        option_c: quizData.options[2],
+        option_d: quizData.options[3],
+        correct_answer: quizData.correctAnswer,
+        bonus_koin: quizData.bonusKoin || 20,
+      })
+      .select()
+      .single();
+    if(error) throw error;
+    return data;
+  }catch(e){
+    console.error('[Supabase] saveTeacherQuiz error:', e);
+    return null;
+  }
+}
+
+// Hapus / nonaktifkan soal
+async function deleteTeacherQuiz(quizId){
+  if(!sbClient) return false;
+  try{
+    const { error } = await sbClient.from('teacher_quizzes').delete().eq('id', quizId);
+    if(error) throw error;
+    return true;
+  }catch(e){
+    console.error('[Supabase] deleteTeacherQuiz error:', e);
+    return false;
+  }
+}
+
+// Catat percobaan jawaban siswa (upsert: percobaan terbaru menimpa yang lama)
+async function recordQuizAttempt(quizId, studentId, isCorrect){
+  if(!sbClient) return false;
+  try{
+    const { error } = await sbClient
+      .from('teacher_quiz_attempts')
+      .upsert({ quiz_id: quizId, student_id: studentId, is_correct: isCorrect, answered_at: new Date().toISOString() },
+        { onConflict: 'quiz_id,student_id' });
+    if(error) throw error;
+    return true;
+  }catch(e){
+    console.error('[Supabase] recordQuizAttempt error:', e);
+    return false;
+  }
+}
+
+// Ambil rekap siapa saja yang sudah menjawab soal tertentu (untuk guru lihat progres kelas)
+async function loadQuizAttempts(quizId){
+  if(!sbClient) return [];
+  try{
+    const { data, error } = await sbClient
+      .from('teacher_quiz_attempts')
+      .select('*')
+      .eq('quiz_id', quizId);
+    if(error) throw error;
+    return data || [];
+  }catch(e){
+    console.error('[Supabase] loadQuizAttempts error:', e);
+    return [];
+  }
 }
