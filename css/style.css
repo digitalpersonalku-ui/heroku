@@ -314,3 +314,38 @@ body{font-family:var(--font-body,'Segoe UI',Arial,sans-serif);background:var(--b
 /* TOAST */
 .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-70px);background:var(--dark);color:#fff;padding:9px 16px;border-radius:40px;font-size:12px;font-weight:700;font-family:var(--font-round,'Trebuchet MS',Arial,sans-serif);z-index:9999;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;display:flex;align-items:center;gap:6px}
 .toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ═══════════════════════════════════════════════
+   TEMA VISUAL BERDASARKAN KELOMPOK USIA — TAHAP 1
+   (Fondasi dasar; akan diperluas penuh di Tahap 2)
+   ═══════════════════════════════════════════════ */
+
+/* Tema MUDA (6-8 tahun): warna ceria, ukuran elemen sedikit lebih besar */
+body.theme-muda {
+  --font-round: 'Varela Round', 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+}
+body.theme-muda .hero-name { font-size: 22px; }
+
+/* Tema MENENGAH (9-11 tahun): default saat ini, tidak ada perubahan signifikan */
+body.theme-menengah {
+  --font-round: 'Varela Round', 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+
+/* Tema DEWASA (12-15 tahun): warna lebih kalem, ukuran elemen sedikit lebih kompak,
+   font lebih tegas/formal agar terasa lebih "matang" untuk anak SMP */
+body.theme-dewasa {
+  --font-round: 'Segoe UI', Arial, sans-serif;
+}
+body.theme-dewasa .hero-name { font-size: 18px; }
+body.theme-dewasa .habit-card { border-radius: 10px; }
+body.theme-dewasa .hstat-num { font-size: 18px; }
+
+/* Selector tema (dipakai di halaman profil/pengaturan, dibangun penuh di Tahap 2) */
+.theme-choice-btn {
+  padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+  background: #fff; cursor: pointer; font-size: 12px; font-weight: 700;
+  transition: all 0.2s;
+}
+.theme-choice-btn.active {
+  border-color: var(--green); background: var(--green-light); color: var(--green-dark);
+}
