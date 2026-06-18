@@ -158,3 +158,44 @@ alter table students add column if not exists theme_override text;
 
 -- Verifikasi:
 -- select id, name, age, theme_override from students;
+
+-- ═══════════════════════════════════════════════════════════
+-- MIGRASI TAHAP 6: PAPAN TANTANGAN DARI GURU
+-- Jalankan blok ini di SQL Editor Supabase (terpisah dari skema awal)
+-- ═══════════════════════════════════════════════════════════
+
+create table if not exists teacher_quizzes (
+  id bigint generated always as identity primary key,
+  teacher_id text not null,             -- ID guru pembuat (cth: 'guru01')
+  kelas text not null,                  -- Kelas yang dituju (cth: 'Usman Bin Affan')
+  category text not null,               -- 'agama' | 'math' | 'english' | 'sains' | 'sejarah'
+  age_group text not null,              -- 'muda' | 'menengah' | 'dewasa'
+  question text not null,
+  option_a text not null,
+  option_b text not null,
+  option_c text not null,
+  option_d text not null,
+  correct_answer int not null,          -- index 0-3 (0=A, 1=B, 2=C, 3=D)
+  bonus_koin int default 20,
+  is_active boolean default true,       -- guru bisa nonaktifkan tanpa hapus
+  created_at timestamptz default now()
+);
+
+-- Mencatat siapa yang sudah menjawab soal buatan guru (untuk guru pantau progres)
+create table if not exists teacher_quiz_attempts (
+  id bigint generated always as identity primary key,
+  quiz_id bigint references teacher_quizzes(id) on delete cascade,
+  student_id text references students(id) on delete cascade,
+  is_correct boolean not null,
+  answered_at timestamptz default now(),
+  unique(quiz_id, student_id) -- satu siswa hanya tercatat 1x per soal (percobaan terakhir)
+);
+
+alter table teacher_quizzes enable row level security;
+alter table teacher_quiz_attempts enable row level security;
+create policy "allow_all_teacher_quizzes" on teacher_quizzes for all using (true) with check (true);
+create policy "allow_all_quiz_attempts" on teacher_quiz_attempts for all using (true) with check (true);
+
+-- Verifikasi:
+-- select * from teacher_quizzes;
+-- select * from teacher_quiz_attempts;

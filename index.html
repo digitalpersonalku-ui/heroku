@@ -509,6 +509,58 @@
       </div>
     </div>
 
+    <!-- SOAL KELAS (Guru) -->
+    <div class="tab-page" id="page-soalguru">
+      <div style="background:linear-gradient(135deg,#1A1A2E,#0F3460);
+        border-radius:18px;padding:14px 16px;margin-bottom:11px;color:#fff">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px">PAPAN TANTANGAN</div>
+        <div style="font-family:var(--font-round);font-size:18px;font-weight:900">
+          📝 Kelola Soal untuk Kelasmu
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px" id="soalguru-subtitle">
+          Soal yang kamu buat hanya akan dilihat oleh siswa kelasmu
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div class="sec-title" style="margin-bottom:9px">➕ Tulis Soal Baru</div>
+        <select id="sg-category" class="add-select" style="width:100%;margin-bottom:7px">
+          <option value="agama">🕌 Agama Islam</option>
+          <option value="math">🔢 Matematika</option>
+          <option value="english">🗣️ Bahasa Inggris</option>
+          <option value="sains">🔬 Sains</option>
+          <option value="sejarah">🌍 Sejarah Islam</option>
+        </select>
+        <select id="sg-agegroup" class="add-select" style="width:100%;margin-bottom:7px">
+          <option value="muda">🧸 6-8 tahun</option>
+          <option value="menengah" selected>🎈 9-11 tahun</option>
+          <option value="dewasa">🎯 12-15 tahun</option>
+        </select>
+        <textarea id="sg-question" placeholder="Tulis pertanyaan di sini..."
+          style="width:100%;height:60px;padding:10px;border:1.5px solid var(--border);
+          border-radius:10px;font-size:12px;line-height:1.6;resize:none;outline:none;
+          background:#FAFAFA;margin-bottom:7px;font-family:var(--font-body)"></textarea>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:7px">
+          <input id="sg-opt-a" class="add-input" placeholder="Pilihan A" style="margin:0">
+          <input id="sg-opt-b" class="add-input" placeholder="Pilihan B" style="margin:0">
+          <input id="sg-opt-c" class="add-input" placeholder="Pilihan C" style="margin:0">
+          <input id="sg-opt-d" class="add-input" placeholder="Pilihan D" style="margin:0">
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:5px">Pilih jawaban yang benar:</div>
+        <select id="sg-correct" class="add-select" style="width:100%;margin-bottom:9px">
+          <option value="0">A</option><option value="1">B</option>
+          <option value="2">C</option><option value="3">D</option>
+        </select>
+        <button class="btn-add" style="width:100%" onclick="submitTeacherQuiz()">💾 Simpan Soal</button>
+        <div id="sg-save-status" style="margin-top:7px;font-size:11px;text-align:center"></div>
+      </div>
+
+      <div class="card">
+        <div class="sec-title" style="margin-bottom:9px">📋 Soal yang Sudah Kamu Buat</div>
+        <div id="soalguru-list"></div>
+      </div>
+    </div>
+
     <!-- ADMIN -->
     <div class="tab-page" id="page-admin">
       <div class="admin-hdr">
@@ -605,6 +657,22 @@
         </select>
       </div>
       <div id="psikologi-content"></div>
+    </div>
+
+    <!-- PAPAN TANTANGAN (Siswa) -->
+    <div class="tab-page" id="page-tantangan">
+      <div style="background:linear-gradient(135deg,#1A1A2E,#0F3460);
+        border-radius:18px;padding:14px 16px;margin-bottom:11px;color:#fff">
+        <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px">DARI GURUMU</div>
+        <div style="font-family:var(--font-round);font-size:18px;font-weight:900">
+          🎯 Papan Tantangan
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px" id="tantangan-subtitle">
+          Pilih topik untuk menjawab soal dari gurumu
+        </div>
+      </div>
+      <div id="tantangan-gallery"></div>
+      <div id="tantangan-quiz-area" style="display:none"></div>
     </div>
 
     <!-- RACE TRACK -->
