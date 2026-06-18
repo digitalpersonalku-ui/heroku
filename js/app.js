@@ -162,12 +162,69 @@ function go(){
   switchPage(startPage);
 }
 
+// ═══════════════════ TEMA VISUAL BERDASARKAN USIA ═══════════════════
+// Mengubah preferensi tema siswa (hanya untuk siswa kelompok menengah/dewasa).
+// Tersimpan ke STORE lalu otomatis sinkron ke Supabase lewat saveStore().
+// Render kotak pilihan tema di halaman Beranda (hanya jika siswa punya >1 pilihan)
+function renderThemeSelector(){
+  const wrap = document.getElementById('theme-selector-wrap');
+  if(!wrap) return;
+  if(CRole !== 'anak' || !CU){ wrap.style.display='none'; return; }
+
+  const choices = getAvailableThemeChoices(CU);
+  if(choices.length <= 1){ wrap.style.display='none'; return; } // muda: dikunci, dewasa: cuma 1 opsi
+
+  const active = getActiveThemeGroup(CU);
+  wrap.style.display = 'block';
+  wrap.innerHTML = `
+    <div class="card" style="margin-bottom:0">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px">
+        🎨 Pilih Tampilan Aplikasi
+      </div>
+      <div style="display:flex;gap:8px">
+        ${choices.map(key => {
+          const g = AGE_GROUPS[key];
+          const isActive = key === active;
+          return `<button class="theme-choice-btn ${isActive?'active':''}"
+            onclick="setThemePreference('${key}')">
+            ${g.icon} ${g.label}
+          </button>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function setThemePreference(themeKey){
+  if(CRole !== 'anak' || !CU) return;
+  const allowed = getAvailableThemeChoices(CU);
+  if(allowed.indexOf(themeKey) === -1){
+    showToast('⚠️ Tema ini tidak tersedia untuk usiamu.');
+    return;
+  }
+  CU.themeOverride = themeKey;
+  saveCU();
+  applyAgeThemeClass();
+  renderThemeSelector();
+  showToast('🎨 Tema diganti ke ' + (AGE_GROUPS[themeKey]?.label || themeKey) + '!');
+}
+
+// Menempelkan class CSS sesuai kelompok usia aktif ke <body>,
+// supaya style.css bisa menyesuaikan tampilan tanpa perlu duplikasi HTML.
+function applyAgeThemeClass(){
+  document.body.classList.remove('theme-muda','theme-menengah','theme-dewasa');
+  if(CRole === 'anak' && CU){
+    const activeGroup = getActiveThemeGroup(CU);
+    document.body.classList.add('theme-' + activeGroup);
+  }
+}
+
 // ═══════════════════ RENDER APP ═══════════════════
 const h=new Date().getHours();
 const GREET=h<11?"Assalamu'alaikum,":h<15?"Selamat siang,":h<18?"Selamat sore,":"Selamat malam,";
 
 function renderApp(){
   const u=CU, first=u.name.split(' ')[0];
+  applyAgeThemeClass();
   const tier=getTier(u.koin);
   document.getElementById('topbar-av').textContent=u.avatar;
   document.getElementById('topbar-name').textContent=first;
@@ -190,6 +247,7 @@ function renderApp(){
   const nick = CU.nickname||first; document.getElementById('hero-name').textContent=nick+'! 👋';
   updateStats();
   renderStreak();
+  renderThemeSelector();
   renderMentor();
   renderHabits();
   renderWorld();
@@ -1333,7 +1391,7 @@ function addStudent(){
   const nickname=document.getElementById('add-nickname').value.trim()||name.split(' ')[0];
   const age=parseInt(document.getElementById('add-age').value)||0;
   const sPin=genPin(); const pPin=genPin();
-  const ns={id:'s'+STORE.nextId++,name,nickname:nickname||name.split(' ')[0],age,kelas,avatar,pin:sPin,parentPin:pPin,koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0};
+  const ns={id:'s'+STORE.nextId++,name,nickname:nickname||name.split(' ')[0],age,kelas,avatar,pin:sPin,parentPin:pPin,koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0,themeOverride:null};
   STORE.students.push(ns);
   saveStore();
   document.getElementById('add-name').value='';

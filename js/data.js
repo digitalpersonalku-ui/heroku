@@ -229,6 +229,42 @@ function todayStr(){return new Date().toISOString().slice(0,10)}
 function genPin(){return String(Math.floor(1000+Math.random()*9000))}
 function getTier(koin){return TIERS.find(t=>koin>=t.min&&koin<=t.max)||TIERS[0]}
 
+// ══ KELOMPOK USIA & TEMA VISUAL ══
+// 3 kelompok: muda (6-8 thn), menengah (9-11 thn), dewasa (12-15 thn)
+const AGE_GROUPS = {
+  muda:     { label:'6-8 tahun',   min:6,  max:8,  icon:'🧸' },
+  menengah: { label:'9-11 tahun',  min:9,  max:11, icon:'🎈' },
+  dewasa:   { label:'12-15 tahun', min:12, max:15, icon:'🎯' },
+};
+
+// Tentukan kelompok usia default berdasarkan umur siswa (tanpa override)
+function getAgeGroupByAge(age){
+  if(age == null) return 'menengah'; // fallback aman jika usia belum diisi
+  if(age <= 8) return 'muda';
+  if(age <= 11) return 'menengah';
+  return 'dewasa';
+}
+
+// Tentukan tema yang AKTIF dipakai untuk siswa: cek override dulu, baru fallback ke usia.
+// Siswa kelompok 'muda' (6-8 thn) TIDAK BISA override — tema anak kecil tetap dikunci
+// agar kontennya selalu sesuai usia mereka secara aman.
+function getActiveThemeGroup(student){
+  if(!student) return 'menengah';
+  const naturalGroup = getAgeGroupByAge(student.age);
+  if(naturalGroup === 'muda') return 'muda'; // tidak bisa override
+  if(student.themeOverride && AGE_GROUPS[student.themeOverride]) return student.themeOverride;
+  return naturalGroup;
+}
+
+// Daftar tema yang BOLEH dipilih siswa ini sebagai override (selain default-nya)
+function getAvailableThemeChoices(student){
+  const naturalGroup = getAgeGroupByAge(student.age);
+  if(naturalGroup === 'muda') return []; // tidak ada pilihan, dikunci ke tema anak kecil
+  if(naturalGroup === 'menengah') return ['menengah','dewasa'];
+  return ['dewasa']; // siswa dewasa hanya punya 1 tema (sudah yang paling dewasa)
+}
+
+
 const DEFAULT_STAFF = [
   {id:'guru01', name:'Reski Wulandari, S.Pd.',        role:'guru',   kelas:'Usman Bin Affan',    password:'guru01',     avatar:'👩‍🏫'},
   {id:'guru02', name:'Hilyatul Jannah',                role:'guru',   kelas:'Umar Bin Khattab',   password:'guru02',     avatar:'👩‍🏫'},

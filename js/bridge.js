@@ -50,10 +50,10 @@ async function bootApp() {
       // Tidak ada data sama sekali → pakai data awal bawaan
       resolvedStore = {
         students: [
-          {id:'s1',name:'Ahmad Badshah Al Fath',nickname:'Badshah',age:10,kelas:'Usman Bin Affan',avatar:'🦁',pin:'1001',parentPin:'2001',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0},
-          {id:'s2',name:'Ahmad Ibrohim Khalid Zayyan',nickname:'Ibrohim',age:11,kelas:'Usman Bin Affan',avatar:'🌙',pin:'1002',parentPin:'2002',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0},
-          {id:'s3',name:'Ahmad Zeeshan Al Barra',nickname:'Zeeshan',age:10,kelas:'Umar Bin Khattab',avatar:'⚡',pin:'1003',parentPin:'2003',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0},
-          {id:'s4',name:'Bahzah Dee Hasya',nickname:'Hasya',age:9,kelas:'Abu Bakar As Siddiq',avatar:'🌟',pin:'1004',parentPin:'2004',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0},
+          {id:'s1',name:'Ahmad Badshah Al Fath',nickname:'Badshah',age:10,kelas:'Usman Bin Affan',avatar:'🦁',pin:'1001',parentPin:'2001',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0,themeOverride:null},
+          {id:'s2',name:'Ahmad Ibrohim Khalid Zayyan',nickname:'Ibrohim',age:11,kelas:'Usman Bin Affan',avatar:'🌙',pin:'1002',parentPin:'2002',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0,themeOverride:null},
+          {id:'s3',name:'Ahmad Zeeshan Al Barra',nickname:'Zeeshan',age:10,kelas:'Umar Bin Khattab',avatar:'⚡',pin:'1003',parentPin:'2003',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0,themeOverride:null},
+          {id:'s4',name:'Bahzah Dee Hasya',nickname:'Hasya',age:9,kelas:'Abu Bakar As Siddiq',avatar:'🌟',pin:'1004',parentPin:'2004',koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0,themeOverride:null},
         ],
         nextId: 5,
         staffAccounts: DEFAULT_STAFF,
