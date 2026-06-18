@@ -8,10 +8,18 @@
 // di index.html, supaya override ini berlaku sebelum app.js berjalan.
 // ═══════════════════════════════════════════════════════════
 
-// ── KONFIGURASI — ISI DENGAN DATA SUPABASE ANDA ──
-// Cara dapatkan: Supabase Dashboard → Project Settings → API
-const SUPABASE_URL = 'https://gvuwmtzaewjfrkphmsbm.supabase.co';        // contoh: https://xxxxx.supabase.co
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dXdtdHphZXdqZnJrcGhtc2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NTc4NjksImV4cCI6MjA5NzMzMzg2OX0.IdEsldQ7cweSbJD_ZEGbLLUVsP62rOHcFORIQ8Yd5ZU';       // kunci publik "anon" / "public"
+// ╔═══════════════════════════════════════════════════════════╗
+// ║  ⚠️  ISI DULU 2 BARIS DI BAWAH INI SEBELUM UPLOAD!  ⚠️       ║
+// ║  Cara dapatkan: Supabase Dashboard → Project Settings → API ║
+// ║  JANGAN sampai file ini diupload masih dengan teks          ║
+// ║  'GANTI_DENGAN...' — aplikasi tidak akan bisa konek ke DB.  ║
+// ╚═══════════════════════════════════════════════════════════╝
+const SUPABASE_URL = 'GANTI_DENGAN_PROJECT_URL_ANDA';        // contoh: https://xxxxx.supabase.co
+const SUPABASE_ANON_KEY = 'GANTI_DENGAN_ANON_KEY_ANDA';       // kunci publik "anon" / "public"
+// ╔═══════════════════════════════════════════════════════════╗
+// ║  Berhenti edit di sini — bagian di bawah TIDAK perlu        ║
+// ║  diubah, biarkan apa adanya.                                ║
+// ╚═══════════════════════════════════════════════════════════╝
 
 // ── INISIALISASI KLIEN SUPABASE ──
 // (Library Supabase dimuat lewat <script> CDN di index.html)
@@ -72,6 +80,7 @@ async function loadStoreFromSupabase() {
       quizCorrect: s.quiz_correct,
       quizTotal: s.quiz_total,
       garage: s.garage || { colorId: 'default', stickers: [], upgrades: [], ownedColors: ['default'] },
+      themeOverride: s.theme_override || null,
     }));
 
     const mappedStaff = (staff || []).map(a => ({
@@ -123,6 +132,7 @@ async function saveStoreToSupabase() {
       quiz_correct: s.quizCorrect,
       quiz_total: s.quizTotal,
       garage: s.garage || { colorId: 'default', stickers: [], upgrades: [], ownedColors: ['default'] },
+      theme_override: s.themeOverride || null,
     }));
 
     if (rows.length) {
