@@ -198,7 +198,7 @@ const QUIZZES = [
 // Ambil kuis acak yang SESUAI kelompok usia siswa.
 // Jika tidak ada soal untuk kelompok tersebut (seharusnya tidak terjadi), fallback ke semua soal.
 function getQuizForStudent(student){
-  const group = getActiveThemeGroup(student);
+  const group = getEducationAgeGroup(student);
   const filtered = QUIZZES.filter(q => !q.ageGroup || q.ageGroup.includes(group));
   const pool = filtered.length > 0 ? filtered : QUIZZES;
   return pool[Math.floor(Math.random() * pool.length)];
@@ -291,6 +291,17 @@ function getActiveThemeGroup(student){
   if(naturalGroup === 'muda') return 'muda'; // tidak bisa override
   if(student.themeOverride && AGE_GROUPS[student.themeOverride]) return student.themeOverride;
   return naturalGroup;
+}
+
+// Kelompok usia untuk KONTEN EDUKASI (kuis, soal, dll) — SELALU berdasarkan
+// usia sungguhan anak, TIDAK terpengaruh preferensi tema visual yang dipilih.
+// Ini sengaja dipisah dari getActiveThemeGroup() karena tema visual itu soal
+// selera tampilan, sedangkan tingkat soal harus sesuai usia nyata demi keadilan
+// dan ketepatan tingkat kesulitan (anak SD tidak boleh kebetulan dapat soal SMP
+// hanya karena dia memilih tampilan 'dewasa' yang lebih ia sukai).
+function getEducationAgeGroup(student){
+  if(!student) return 'menengah';
+  return getAgeGroupByAge(student.age);
 }
 
 // Daftar tema yang BOLEH dipilih siswa ini sebagai override (selain default-nya)

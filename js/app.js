@@ -1192,7 +1192,7 @@ async function initTantangan(){
 function renderTantanganGallery(){
   const gallery = document.getElementById('tantangan-gallery');
   if(!gallery) return;
-  const myGroup = getActiveThemeGroup(CU);
+  const myGroup = getEducationAgeGroup(CU);
 
   gallery.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">` +
     TANTANGAN_TOPICS.map(t => {
@@ -1224,7 +1224,7 @@ function renderTantanganGallery(){
 let _currentTantanganQuiz = null;
 
 function openTantanganTopic(category){
-  const myGroup = getActiveThemeGroup(CU);
+  const myGroup = getEducationAgeGroup(CU);
   const pool = _tantanganQuizCache.filter(q => q.category===category && q.ageGroup===myGroup);
   if(!pool.length){ showToast('⚠️ Belum ada soal di topik ini.'); return; }
   _currentTantanganQuiz = pool[Math.floor(Math.random()*pool.length)];
@@ -1589,7 +1589,7 @@ function addStudent(){
   const sPin=genPin(); const pPin=genPin();
   const ns={id:'s'+STORE.nextId++,name,nickname:nickname||name.split(' ')[0],age,kelas,avatar,pin:sPin,parentPin:pPin,koin:0,xp:0,level:1,streak:0,lastActive:null,checkedToday:{},verifiedToday:{},totalDays:0,cards:[],quizCorrect:0,quizTotal:0,themeOverride:null};
   STORE.students.push(ns);
-  saveStore();
+  saveStore(ns.id);
   document.getElementById('add-name').value='';
   renderAdmin();renderSchool();
   showToast('✅ '+name+' ditambahkan! PIN Siswa: '+sPin+' | PIN Ortu: '+pPin);
@@ -1756,7 +1756,7 @@ function saveCU(){
   if(!CU||CRole!=='anak')return;
   const i=STORE.students.findIndex(s=>s.id===CU.id);
   if(i>=0)STORE.students[i]=CU;
-  saveStore();
+  saveStore(CU.id); // hanya kirim siswa ini, bukan seluruh array
 }
 
 // ═══════════════════ CELEBRATION ═══════════════════
