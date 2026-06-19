@@ -199,3 +199,16 @@ create policy "allow_all_quiz_attempts" on teacher_quiz_attempts for all using (
 -- Verifikasi:
 -- select * from teacher_quizzes;
 -- select * from teacher_quiz_attempts;
+
+-- ═══════════════════════════════════════════════════════════
+-- PERBAIKAN BUG: Reset theme_override dari sesi testing sebelumnya
+-- Jalankan SEKALI saja untuk membersihkan data testing lama.
+-- (Bug ditemukan: soal kuis & Papan Tantangan keliru memakai preferensi
+-- TEMA VISUAL untuk menentukan tingkat soal, padahal seharusnya
+-- berdasarkan USIA ASLI siswa. Sudah diperbaiki di kode, tapi data lama
+-- yang sempat ter-set saat testing perlu dibersihkan agar konsisten.)
+-- ═══════════════════════════════════════════════════════════
+update students set theme_override = null where theme_override is not null;
+
+-- Verifikasi setelah dijalankan (harus kosong/tidak ada baris):
+-- select id, name, age, theme_override from students where theme_override is not null;
