@@ -171,10 +171,12 @@
   function boot() {
     injectCSS();
     startObserver();
-    // Coba langsung kalau SVG sudah ada
     setTimeout(applyAnimations, 400);
     console.log('[WA] World Animation v2 aktif — awan & pohon bergerak ✅');
   }
+
+  // Expose WA global agar HeroKuHealth() bisa mendeteksi
+  W.WA = { version: '2.0', apply: applyAnimations };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
