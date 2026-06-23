@@ -670,6 +670,7 @@
 
   // ── Public API ───────────────────────────────────────
   W.GPO = {
+    render: renderOval,
     switchTab(tab) {
       ['misi','klasemen'].forEach(t => {
         document.getElementById(`_gpo_tab_${t}`)?.classList.toggle('active', t === tab);
@@ -692,14 +693,27 @@
     const wait = setInterval(() => {
       if (typeof W.renderRaceTrack === 'function' || tries > 80) {
         clearInterval(wait);
-        if (typeof W.renderRaceTrack === 'function' && !W.renderRaceTrack._gpo_patched) {
-          W.renderRaceTrack = renderOval;
-          W.renderRaceTrack._gpo_patched = true;
+        // Override renderRaceTrack
+        W.renderRaceTrack = renderOval;
+        W.renderRaceTrack._gpo_patched = true;
+
+        // Patch showPage agar render ulang saat tab Balapan diklik
+        if (typeof W.showPage === 'function' && !W.showPage._gpo_patched) {
+          const _origShow = W.showPage;
+          W.showPage = function(page) {
+            _origShow.call(this, page);
+            if (page === 'race') setTimeout(renderOval, 80);
+          };
+          W.showPage._gpo_patched = true;
         }
-        // Kalau halaman race sudah aktif, langsung render
-        if (document.getElementById('page-race')?.classList.contains('active') ||
-            document.getElementById('race-display')) {
-          renderOval();
+
+        // Langsung render jika halaman race sudah aktif
+        const racePage = document.getElementById('page-race');
+        if (racePage && (racePage.classList.contains('active') || racePage.style.display !== 'none')) {
+          setTimeout(renderOval, 100);
+        } else {
+          // Render sekali untuk siapkan DOM
+          setTimeout(renderOval, 300);
         }
       }
       tries++;
