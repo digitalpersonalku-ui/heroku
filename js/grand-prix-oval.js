@@ -198,24 +198,23 @@
     const total    = sorted.length;
 
     // Hitung progress tiap siswa (0..1 = satu putaran penuh)
-    // Pastikan tidak ada dua mobil di posisi yang sama persis
-    const cars = sorted.map((s, i) => {
-      let rawP;
+    // Spread dulu semua progress, lalu baru build cars array
+    const progressList = sorted.map((s, i) => {
       if (allZero) {
-        // Semua koin 0: spread merata di 0-70% oval
-        rawP = (i / Math.max(total - 1, 1)) * 0.70;
+        return (i / Math.max(total - 1, 1)) * 0.70;
       } else {
-        // Koin berbeda: posisi berdasarkan koin tapi dengan gap minimum antar mobil
         const baseP = Math.min((s.koin / maxKoin) * 0.92, 0.98);
-        // Tambah small offset berdasarkan rank agar tidak bertumpuk
-        rawP = Math.min(baseP + (i * 0.008), 0.98);
+        return Math.min(baseP + (i * 0.008), 0.98);
       }
-      // Jarak minimum antar mobil di lintasan: 0.05
-      if (i > 0) {
-        const prevP = cars[i-1]?.rawP || 0;
-        if (Math.abs(rawP - prevP) < 0.05) rawP = prevP - 0.05;
-        rawP = Math.max(rawP, 0.01);
+    });
+    // Pastikan gap minimum 0.05 antar mobil (dari belakang ke depan)
+    for (let i = progressList.length - 2; i >= 0; i--) {
+      if (progressList[i] - progressList[i+1] < 0.05) {
+        progressList[i] = Math.min(progressList[i+1] + 0.05, 0.98);
       }
+    }
+    const cars = sorted.map((s, i) => {
+      const rawP   = progressList[i];
       const offset = laneOffset(i, total);
       const pos    = ovalPosLane(rawP, offset);
       const isMe   = myStudent && s.id === myStudent.id;
