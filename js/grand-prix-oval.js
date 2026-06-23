@@ -198,21 +198,23 @@
     const total    = sorted.length;
 
     // Hitung progress tiap siswa (0..1 = satu putaran penuh)
-    // Spread dulu semua progress, lalu baru build cars array
-    const progressList = sorted.map((s, i) => {
-      if (allZero) {
-        return (i / Math.max(total - 1, 1)) * 0.70;
-      } else {
-        const baseP = Math.min((s.koin / maxKoin) * 0.92, 0.98);
-        return Math.min(baseP + (i * 0.008), 0.98);
+    // Gunakan rank-based spread yang proporsional agar mobil tidak menumpuk
+    const progressList = (() => {
+      const n = sorted.length;
+      if (allZero || maxKoin === 0) {
+        // Semua nol: spread merata 10%-75%
+        return sorted.map((_, i) => 0.10 + (i / Math.max(n - 1, 1)) * 0.65);
       }
-    });
-    // Pastikan gap minimum 0.05 antar mobil (dari belakang ke depan)
-    for (let i = progressList.length - 2; i >= 0; i--) {
-      if (progressList[i] - progressList[i+1] < 0.05) {
-        progressList[i] = Math.min(progressList[i+1] + 0.05, 0.98);
+      // Ada koin: map ke range 15%-85%, lalu enforce gap minimum 0.08
+      const raw = sorted.map(s => 0.15 + (s.koin / maxKoin) * 0.70);
+      // Enforce gap minimum dari depan ke belakang
+      const MIN_GAP = 0.08;
+      for (let i = 1; i < raw.length; i++) {
+        if (raw[i-1] - raw[i] < MIN_GAP) raw[i] = raw[i-1] - MIN_GAP;
+        if (raw[i] < 0.05) raw[i] = 0.05;
       }
-    }
+      return raw;
+    })();
     const cars = sorted.map((s, i) => {
       const rawP   = progressList[i];
       const offset = laneOffset(i, total);
