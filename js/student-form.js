@@ -939,26 +939,28 @@
     if (pinPreview) pinPreview.style.display = 'none';
 
     // ── 2. Inject tombol "➕ Tambah Siswa Baru" yang prominent ─
-    const secTitle = document.querySelector('.sec-title');
-    if (secTitle && !document.getElementById('_sf_add_main_btn')) {
+    // Target: tepat setelah admin-hdr, sebelum card form lama
+    const adminHdr = document.querySelector('#page-admin .admin-hdr');
+    if (adminHdr && !document.getElementById('_sf_add_main_btn')) {
       const btn = document.createElement('button');
       btn.id        = '_sf_add_main_btn';
       btn.innerHTML = '➕ Tambah Siswa Baru';
       btn.setAttribute('onclick', 'SF.open()');
       btn.style.cssText = [
-        'width:100%', 'margin-top:10px', 'padding:12px',
+        'width:100%', 'margin:10px 0 0', 'padding:13px',
         'background:linear-gradient(135deg,#27AE60,#1E8449)',
         'color:#fff', 'border:none', 'border-radius:12px',
-        'font-size:14px', 'font-weight:700', 'cursor:pointer',
+        'font-size:15px', 'font-weight:700', 'cursor:pointer',
         'font-family:var(--font-round,inherit)',
         'box-shadow:0 4px 12px rgba(39,174,96,.35)',
         'transition:transform .15s,box-shadow .15s',
+        'display:block',
       ].join(';');
       btn.onmouseenter = () => { btn.style.transform='translateY(-1px)'; btn.style.boxShadow='0 6px 18px rgba(39,174,96,.45)'; };
       btn.onmouseleave = () => { btn.style.transform=''; btn.style.boxShadow='0 4px 12px rgba(39,174,96,.35)'; };
 
-      // Sisipkan setelah sec-title
-      secTitle.parentNode.insertBefore(btn, secTitle.nextSibling);
+      // Sisipkan setelah admin-hdr
+      adminHdr.insertAdjacentElement('afterend', btn);
     }
 
     // ── 3. Patch renderAdmin — SEKALI SAJA ───────────────────
