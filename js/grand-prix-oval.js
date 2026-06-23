@@ -18,6 +18,54 @@
 (function (W) {
   'use strict';
 
+  // ── Helper: ambil STORE dari scope manapun ──────────────
+  let _storeRef = null; // cache referensi STORE yang benar
+
+  function getStore() {
+    // Kalau sudah punya referensi yang valid, pakai itu
+    if (_storeRef && _storeRef.students && _storeRef.students.length > 0) return _storeRef;
+    // window.STORE (jika app.js expose)
+    if (window.STORE && window.STORE.students) {
+      _storeRef = window.STORE;
+      return _storeRef;
+    }
+    // Coba curi dari saveStore atau fungsi lain yang capture STORE via closure
+    // Trick: patch saveStore untuk expose referensi STORE
+    if (typeof saveStore === 'function') {
+      // saveStore di app.js mengakses STORE langsung
+      // kita intercept dengan cara expose via dummy call
+    }
+    return window.STORE || { students: [], nextId: 1 };
+  }
+
+  // Expose STORE ke window sesegera mungkin via patch saveStore
+  function exposeStore() {
+    if (typeof saveStore === 'function' && !saveStore._gpo_expose) {
+      const _orig = saveStore;
+      saveStore = function() {
+        if (typeof STORE !== 'undefined' && STORE.students) {
+          window.STORE = STORE;
+          _storeRef = STORE;
+        }
+        return _orig.apply(this, arguments);
+      };
+      saveStore._gpo_expose = true;
+    }
+    // Juga patch loadStore
+    if (typeof loadStore === 'function' && !loadStore._gpo_expose) {
+      const _origL = loadStore;
+      loadStore = function() {
+        const r = _origL.apply(this, arguments);
+        if (typeof STORE !== 'undefined' && STORE.students) {
+          window.STORE = STORE;
+          _storeRef = STORE;
+        }
+        return r;
+      };
+      loadStore._gpo_expose = true;
+    }
+  }
+
   // ── Konstanta oval ──────────────────────────────────────
   // Oval digambar dalam koordinat SVG 700×420
   // cx/cy = center, rx/ry = radius sumbu x/y lintasan tengah
@@ -503,8 +551,14 @@
     con.style.minHeight = '420px';
     con.style.overflow  = 'visible';
 
-    const ss = W.STORE?.students || [];
+    const ss = getStore().students || [];
     if (!ss.length) {
+      // Retry sekali lagi setelah 500ms — mungkin Supabase belum selesai
+      if (!renderOval._retried) {
+        renderOval._retried = true;
+        setTimeout(() => { renderOval._retried = false; renderOval(); }, 800);
+        return;
+      }
       con.innerHTML = `
         <div style="background:#1A1A2E;border-radius:14px;padding:24px;text-align:center;color:white">
           <div style="font-size:36px;margin-bottom:8px">🏁</div>
@@ -513,6 +567,7 @@
         </div>`;
       return;
     }
+    renderOval._retried = false;
 
     const sorted     = [...ss].sort((a, b) => b.koin - a.koin || b.streak - a.streak);
     const myStudent  = W.CU && W.CRole === 'anak' ? sorted.find(s => s.id === W.CU.id) : null;
@@ -687,7 +742,7 @@
       });
     },
     focusMe() {
-      const ss      = W.STORE?.students || [];
+      const ss      = getStore().students || [];
       const sorted  = [...ss].sort((a, b) => b.koin - a.koin || b.streak - a.streak);
       const myStudent = W.CU && W.CRole === 'anak' ? sorted.find(s => s.id === W.CU.id) : null;
       if (myStudent) autoPan(myStudent, sorted);
@@ -724,7 +779,7 @@
     // Tunggu STORE.students terisi (Supabase selesai load) lalu render
     let dataWait = 0;
     const waitData = setInterval(() => {
-      const students = W.STORE?.students;
+      const students = getStore().students;
       if ((students && students.length > 0) || dataWait > 100) {
         clearInterval(waitData);
         // Render jika halaman race aktif
@@ -744,6 +799,7 @@
       if (btn && btn.getAttribute('onclick')?.includes('race')) setTimeout(renderOval, 150);
     });
 
+    exposeStore();
     console.log('[GPO] Grand Prix Oval v1.0 siap ✅ — sirkuit oval mobile-first aktif');
   }
 
