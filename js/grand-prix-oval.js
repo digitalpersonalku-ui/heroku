@@ -494,6 +494,15 @@
     const myPos = document.getElementById('race-my-pos');
     if (!con) return;
 
+    // Fix: pastikan page-race punya cukup ruang
+    const racePage = document.getElementById('page-race');
+    if (racePage) {
+      racePage.style.minHeight = '100vh';
+      racePage.style.height    = 'auto';
+    }
+    con.style.minHeight = '420px';
+    con.style.overflow  = 'visible';
+
     const ss = W.STORE?.students || [];
     if (!ss.length) {
       con.innerHTML = `
