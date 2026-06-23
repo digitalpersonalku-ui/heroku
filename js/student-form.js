@@ -1,10 +1,16 @@
 // ═══════════════════════════════════════════════════════════
-// HEROKU STUDENT FORM v1.0
-// Form manajemen siswa lengkap
+// HEROKU STUDENT FORM v2.0
+// Form manajemen siswa lengkap — Integrasi penuh
 //
-// File: js/student-form.js
+// File: js/student-form.js  (gantikan v1.0)
 // Pasang setelah verify-upgrade.js:
 //   <script src="js/student-form.js"></script>
+//
+// Changelog v2.0:
+//   - Fix: double patch renderAdmin dihapus (guard _sf_patched)
+//   - Fix: form lama (single-add-mode) disembunyikan sepenuhnya
+//   - Fix: tombol ➕ Tambah Siswa Baru yang prominent di halaman Admin
+//   - Fix: bulk-toggle-btn & pin-preview lama disembunyikan
 //
 // Field lengkap:
 //   1. Nama Lengkap
@@ -920,25 +926,55 @@
   // Gantikan tombol "+ Tambah" lama dengan yang baru
   // ═══════════════════════════════════════════════════════════
   function upgradeAdminPage() {
-    // Gantikan tombol tambah lama
-    const oldBtn = document.querySelector('[onclick="addStudent()"]');
-    if (oldBtn) {
-      oldBtn.textContent  = '+ Tambah Siswa';
-      oldBtn.setAttribute('onclick', 'SF.open()');
+    // ── 1. Sembunyikan form lama sepenuhnya ──────────────────
+    const singleMode = document.getElementById('single-add-mode');
+    if (singleMode) singleMode.style.display = 'none';
+
+    // Sembunyikan seluruh card form tambah lama (parent dari single-add-mode)
+    // tapi tetap tampilkan Import Massal jika ada
+    const bulkToggleBtn = document.getElementById('bulk-toggle-btn');
+    if (bulkToggleBtn) bulkToggleBtn.style.display = 'none';
+
+    const pinPreview = document.getElementById('pin-preview');
+    if (pinPreview) pinPreview.style.display = 'none';
+
+    // ── 2. Inject tombol "➕ Tambah Siswa Baru" yang prominent ─
+    const secTitle = document.querySelector('.sec-title');
+    if (secTitle && !document.getElementById('_sf_add_main_btn')) {
+      const btn = document.createElement('button');
+      btn.id        = '_sf_add_main_btn';
+      btn.innerHTML = '➕ Tambah Siswa Baru';
+      btn.setAttribute('onclick', 'SF.open()');
+      btn.style.cssText = [
+        'width:100%', 'margin-top:10px', 'padding:12px',
+        'background:linear-gradient(135deg,#27AE60,#1E8449)',
+        'color:#fff', 'border:none', 'border-radius:12px',
+        'font-size:14px', 'font-weight:700', 'cursor:pointer',
+        'font-family:var(--font-round,inherit)',
+        'box-shadow:0 4px 12px rgba(39,174,96,.35)',
+        'transition:transform .15s,box-shadow .15s',
+      ].join(';');
+      btn.onmouseenter = () => { btn.style.transform='translateY(-1px)'; btn.style.boxShadow='0 6px 18px rgba(39,174,96,.45)'; };
+      btn.onmouseleave = () => { btn.style.transform=''; btn.style.boxShadow='0 4px 12px rgba(39,174,96,.35)'; };
+
+      // Sisipkan setelah sec-title
+      secTitle.parentNode.insertBefore(btn, secTitle.nextSibling);
     }
 
-    // Upgrade tampilan daftar siswa
+    // ── 3. Patch renderAdmin — SEKALI SAJA ───────────────────
     patchRenderAdmin();
   }
 
   function patchRenderAdmin() {
     if (typeof W.renderAdmin !== 'function') return;
+    // Guard: jangan patch dua kali
+    if (W.renderAdmin._sf_patched) return;
     const _orig = W.renderAdmin;
     W.renderAdmin = function () {
       _orig.call(this);
-      // Upgrade tampilan setiap card siswa
       setTimeout(upgradeStudentCards, 100);
     };
+    W.renderAdmin._sf_patched = true;
   }
 
   function upgradeStudentCards() {
@@ -1006,14 +1042,8 @@
       if ((typeof STORE !== 'undefined' && typeof renderAdmin === 'function') || tries > 80) {
         clearInterval(wait);
         upgradeAdminPage();
-        // Render awal
-        if (typeof renderAdmin === 'function') {
-          const _orig = W.renderAdmin;
-          W.renderAdmin = function () {
-            _orig.call(this);
-            setTimeout(upgradeStudentCards, 100);
-          };
-        }
+        // Render awal agar student cards langsung ter-upgrade
+        if (typeof renderAdmin === 'function') renderAdmin();
       }
       tries++;
     }, 150);
