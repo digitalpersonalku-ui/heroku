@@ -69,6 +69,9 @@ async function bootApp() {
   STORE.nextId = resolvedStore.nextId;
   STORE.staffAccounts = resolvedStore.staffAccounts;
 
+  // Expose STORE ke window agar file enhancement (grand-prix-oval.js, dll) bisa mengaksesnya
+  window.STORE = STORE;
+
   hideLoadingScreen();
   showSupabaseStatus();
 

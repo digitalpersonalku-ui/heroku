@@ -8,8 +8,6 @@
 function initStore(){ return window.STORE || { students: [], nextId: 1, staffAccounts: DEFAULT_STAFF }; }
 
 let STORE = { students: [], nextId: 1, staffAccounts: DEFAULT_STAFF }; // diisi ulang oleh bootApp()
-// Expose STORE ke window agar file enhancement bisa mengaksesnya
-Object.defineProperty(window, 'STORE', { get: () => STORE, set: (v) => { STORE = v; }, configurable: true });
 let CU=null, CRole=null, selRole=null;
 let adminFilter='all', habitToCheck=null, quizAnswered=false;
 let sessionEarnedKoin=0;
