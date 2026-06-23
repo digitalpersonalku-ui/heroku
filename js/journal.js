@@ -98,19 +98,49 @@
   }
 
   // Patch resetDayIfNeeded agar auto-save sebelum reset
+  // ── Flush: simpan checkin_logs untuk siswa yang punya data ─
+  // Dipanggil dari 2 titik: saat resetDayIfNeeded & saat saveStore
+  async function flushCheckinLogs(onlyStudentId) {
+    const client = sb();
+    if (!client || !W.STORE) return;
+    const today = todayWIB();
+    const targets = onlyStudentId
+      ? W.STORE.students.filter(s => s.id === onlyStudentId)
+      : W.STORE.students;
+    for (const s of targets) {
+      const habits = s.checkedToday || {};
+      if (!Object.keys(habits).length) continue;
+      const date = s.lastActive || today;
+      await saveCheckinLog(s, date);
+    }
+  }
+
+  // Patch resetDayIfNeeded — save kemarin sebelum di-reset
   function patchResetDay() {
     if (typeof W.resetDayIfNeeded !== 'function') return;
     if (W.resetDayIfNeeded._jrn_patched) return;
     const _orig = W.resetDayIfNeeded;
     W.resetDayIfNeeded = function (s) {
       const t = typeof todayStr === 'function' ? todayStr() : todayWIB();
-      // Kalau hari berubah dan ada data kemarin → simpan dulu
       if (s.lastActive && s.lastActive !== t && Object.keys(s.checkedToday || {}).length > 0) {
         saveCheckinLog(s, s.lastActive);
       }
       return _orig.call(this, s);
     };
     W.resetDayIfNeeded._jrn_patched = true;
+  }
+
+  // Patch saveStore — setiap kali data disimpan ke Supabase,
+  // pastikan checkin hari ini juga masuk ke checkin_logs
+  function patchSaveStore() {
+    if (typeof W.saveStore !== 'function') return;
+    if (W.saveStore._jrn_patched) return;
+    const _orig = W.saveStore;
+    W.saveStore = async function (studentId) {
+      await _orig.apply(this, arguments);
+      flushCheckinLogs(studentId || null);
+    };
+    W.saveStore._jrn_patched = true;
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -904,6 +934,7 @@
   function boot() {
     injectCSS();
     patchResetDay();
+    patchSaveStore();
 
     // Tunggu halaman admin ready
     let tries = 0;
