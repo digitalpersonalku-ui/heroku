@@ -376,26 +376,44 @@
   // RENDER PANEL
   // ═══════════════════════════════════════════════════════════
   function buildPanel() {
+    // Inject jurnal ke dalam school-panel-rekap (tab Rekap di halaman Kelas/Sekolah)
+    const rekapPanel = document.getElementById('school-panel-rekap');
+    if (!rekapPanel) return;
     if (document.getElementById('_jrn_panel')) return;
 
-    const adminList = document.getElementById('admin-list');
-    if (!adminList) return;
+    // Tambah tab "Jurnal" baru di sebelah tab Rekap yang sudah ada
+    const tabRow = rekapPanel.closest('.card')?.querySelector('div[style*="display:flex"]');
+    if (tabRow && !document.getElementById('btn-jurnal')) {
+      const jBtn = document.createElement('button');
+      jBtn.id = 'btn-jurnal';
+      jBtn.innerHTML = '📓 Jurnal';
+      jBtn.style.cssText = 'flex:1;padding:9px 4px;border:1.5px solid var(--border);border-radius:9px;' +
+        'background:#fff;cursor:pointer;font-size:11px;font-weight:700;' +
+        'font-family:var(--font-round);color:var(--muted)';
+      jBtn.onclick = () => {
+        showSchoolPanel('rekap');
+        switchJurnalTab('jurnal');
+      };
+      tabRow.appendChild(jBtn);
+    }
 
+    // Buat panel jurnal (tersembunyi dulu, ditampilkan saat tab diklik)
     const panel = document.createElement('div');
     panel.id = '_jrn_panel';
+    panel.style.display = 'none';
     panel.innerHTML = `
-      <div class="_jrn_card">
-        <div class="_jrn_title">📓 Jurnal Kebiasaan Siswa</div>
+      <!-- Ringkasan hari ini (dari renderRekap lama) -->
+      <div id="_jrn_today_wrap" style="margin-bottom:12px"></div>
+
+      <div style="border-top:1px solid #EEE;padding-top:12px">
+        <div class="_jrn_title" style="margin-bottom:10px">📓 Riwayat Jurnal</div>
 
         <!-- Controls -->
         <div class="_jrn_controls _jrn_no_print">
-          <!-- View mode -->
           <select class="_jrn_select" id="_jrn_view" onchange="JRN.onViewChange(this.value)">
             <option value="kelas">📊 Per Kelas</option>
             <option value="siswa">👤 Per Siswa</option>
           </select>
-
-          <!-- Kelas filter (show when view=kelas or siswa) -->
           <select class="_jrn_select" id="_jrn_kelas" onchange="JRN.onKelasChange(this.value)">
             <option value="all">Semua Kelas</option>
             <option value="Usman Bin Affan">Usman Bin Affan</option>
@@ -403,48 +421,63 @@
             <option value="Abu Bakar As Siddiq">Abu Bakar As Siddiq</option>
             <option value="Ali Bin Abi Thalib">Ali Bin Abi Thalib</option>
           </select>
-
-          <!-- Siswa filter (show when view=siswa) -->
           <select class="_jrn_select" id="_jrn_student" style="display:none" onchange="JRN.onStudentChange(this.value)">
             <option value="">-- Pilih Siswa --</option>
           </select>
-
-          <!-- Periode -->
           <select class="_jrn_select" id="_jrn_mode" onchange="JRN.onModeChange(this.value)">
             <option value="day">Hari Ini</option>
             <option value="week" selected>Minggu Ini</option>
             <option value="month">Bulan Ini</option>
             <option value="custom">Rentang Custom</option>
           </select>
-
-          <!-- Custom range -->
-          <span id="_jrn_custom_range" style="display:none;gap:4px;align-items:center;display:none">
-            <input class="_jrn_input" type="date" id="_jrn_from" style="width:130px">
+          <span id="_jrn_custom_range" style="display:none;gap:4px;align-items:center">
+            <input class="_jrn_input" type="date" id="_jrn_from" style="width:120px">
             <span style="color:#999;font-size:11px">s/d</span>
-            <input class="_jrn_input" type="date" id="_jrn_to" style="width:130px">
+            <input class="_jrn_input" type="date" id="_jrn_to" style="width:120px">
           </span>
-
           <button class="_jrn_btn _jrn_btn_primary _jrn_no_print" onclick="JRN.load()">🔍 Tampilkan</button>
         </div>
 
-        <!-- Export buttons -->
+        <!-- Export -->
         <div class="_jrn_controls _jrn_no_print" id="_jrn_export_row" style="display:none">
           <button class="_jrn_btn _jrn_btn_pdf"   onclick="JRN.exportPDF()">🖨️ Export PDF</button>
           <button class="_jrn_btn _jrn_btn_excel" onclick="JRN.exportExcel()">📊 Export Excel</button>
         </div>
 
-        <!-- Summary -->
         <div id="_jrn_summary"></div>
-
-        <!-- Content -->
         <div id="_jrn_content">
           <div class="_jrn_empty">Pilih periode lalu klik <strong>Tampilkan</strong></div>
         </div>
       </div>
     `;
 
-    // Sisipkan sebelum admin-list
-    adminList.parentNode.insertBefore(panel, adminList);
+    rekapPanel.appendChild(panel);
+  }
+
+  // Switch antara sub-tab Rekap lama vs Jurnal baru
+  function switchJurnalTab(tab) {
+    const oldRekap = document.getElementById('rekap-table-wrap');
+    const oldNote  = oldRekap?.closest('div') || null;
+    const jPanel   = document.getElementById('_jrn_panel');
+    const btnJrn   = document.getElementById('btn-jurnal');
+    const btnRekap = document.getElementById('btn-rekap');
+
+    if (tab === 'jurnal') {
+      // Sembunyikan konten rekap lama, tampilkan jurnal
+      if (oldRekap) oldRekap.style.display = 'none';
+      const aiNote = document.querySelector('#school-panel-rekap > div:not(#_jrn_panel)');
+      if (aiNote) aiNote.style.display = 'none';
+      if (jPanel) jPanel.style.display = 'block';
+      // Style tombol aktif
+      if (btnJrn)  { btnJrn.style.borderColor='var(--green)'; btnJrn.style.background='var(--green-light)'; btnJrn.style.color='var(--green-dark)'; }
+      if (btnRekap){ btnRekap.style.borderColor='var(--border)'; btnRekap.style.background='#fff'; btnRekap.style.color='var(--muted)'; }
+    } else {
+      // Kembali ke rekap lama
+      if (oldRekap) oldRekap.style.display = '';
+      const aiNote = document.querySelector('#school-panel-rekap > div:not(#_jrn_panel)');
+      if (aiNote) aiNote.style.display = '';
+      if (jPanel) jPanel.style.display = 'none';
+    }
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -936,23 +969,25 @@
     patchResetDay();
     patchSaveStore();
 
-    // Tunggu halaman admin ready
+    // Tunggu DOM ready lalu patch showSchoolPanel
     let tries = 0;
     const wait = setInterval(() => {
-      if (document.getElementById('admin-list') || tries > 100) {
+      if (document.getElementById('school-panel-rekap') || tries > 100) {
         clearInterval(wait);
         buildPanel();
 
-        // Patch renderAdmin agar panel jurnal tidak hilang saat re-render
-        if (typeof W.renderAdmin === 'function' && !W.renderAdmin._jrn_patched) {
-          const _orig = W.renderAdmin;
-          W.renderAdmin = function () {
-            _orig.call(this);
-            setTimeout(() => {
+        // Patch showSchoolPanel agar tab Jurnal di-handle dengan benar
+        if (typeof W.showSchoolPanel === 'function' && !W.showSchoolPanel._jrn_patched) {
+          const _orig = W.showSchoolPanel;
+          W.showSchoolPanel = function (panel) {
+            _orig.call(this, panel);
+            if (panel === 'rekap') {
+              // Pastikan panel jurnal selalu tersembunyi saat klik tab Rekap dari luar
+              switchJurnalTab('rekap');
               if (!document.getElementById('_jrn_panel')) buildPanel();
-            }, 150);
+            }
           };
-          W.renderAdmin._jrn_patched = true;
+          W.showSchoolPanel._jrn_patched = true;
         }
       }
       tries++;
