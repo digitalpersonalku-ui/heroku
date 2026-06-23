@@ -689,10 +689,12 @@
   function boot() {
     injectCSS();
 
+    // Tunggu renderRaceTrack tersedia lalu patch
     let tries = 0;
-    const wait = setInterval(() => {
+    const waitFn = setInterval(() => {
       if (typeof W.renderRaceTrack === 'function' || tries > 80) {
-        clearInterval(wait);
+        clearInterval(waitFn);
+
         // Override renderRaceTrack
         W.renderRaceTrack = renderOval;
         W.renderRaceTrack._gpo_patched = true;
@@ -706,18 +708,32 @@
           };
           W.showPage._gpo_patched = true;
         }
-
-        // Langsung render jika halaman race sudah aktif
-        const racePage = document.getElementById('page-race');
-        if (racePage && (racePage.classList.contains('active') || racePage.style.display !== 'none')) {
-          setTimeout(renderOval, 100);
-        } else {
-          // Render sekali untuk siapkan DOM
-          setTimeout(renderOval, 300);
-        }
       }
       tries++;
     }, 150);
+
+    // Tunggu STORE.students terisi (Supabase selesai load) lalu render
+    let dataWait = 0;
+    const waitData = setInterval(() => {
+      const students = W.STORE?.students;
+      if ((students && students.length > 0) || dataWait > 100) {
+        clearInterval(waitData);
+        // Render jika halaman race aktif
+        const racePage = document.getElementById('page-race');
+        if (racePage) setTimeout(renderOval, 100);
+      }
+      dataWait++;
+    }, 200);
+
+    // Listen HeroKuEvents untuk re-render saat data berubah
+    document.addEventListener('heroku:pageSwitch', (e) => {
+      if (e.detail?.page === 'race') setTimeout(renderOval, 80);
+    });
+    // Fallback: listen klik tab Balapan
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[onclick]');
+      if (btn && btn.getAttribute('onclick')?.includes('race')) setTimeout(renderOval, 150);
+    });
 
     console.log('[GPO] Grand Prix Oval v1.0 siap ✅ — sirkuit oval mobile-first aktif');
   }
