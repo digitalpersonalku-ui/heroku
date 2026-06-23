@@ -198,18 +198,32 @@
     const total    = sorted.length;
 
     // Hitung progress tiap siswa (0..1 = satu putaran penuh)
+    // Pastikan tidak ada dua mobil di posisi yang sama persis
     const cars = sorted.map((s, i) => {
-      const rawP = allZero
-        ? (i / Math.max(total - 1, 1)) * 0.25  // demo spread 0-25%
-        : Math.min((s.koin / maxKoin) * 0.92, 0.98);
+      let rawP;
+      if (allZero) {
+        // Semua koin 0: spread merata di 0-70% oval
+        rawP = (i / Math.max(total - 1, 1)) * 0.70;
+      } else {
+        // Koin berbeda: posisi berdasarkan koin tapi dengan gap minimum antar mobil
+        const baseP = Math.min((s.koin / maxKoin) * 0.92, 0.98);
+        // Tambah small offset berdasarkan rank agar tidak bertumpuk
+        rawP = Math.min(baseP + (i * 0.008), 0.98);
+      }
+      // Jarak minimum antar mobil di lintasan: 0.05
+      if (i > 0) {
+        const prevP = cars[i-1]?.rawP || 0;
+        if (Math.abs(rawP - prevP) < 0.05) rawP = prevP - 0.05;
+        rawP = Math.max(rawP, 0.01);
+      }
       const offset = laneOffset(i, total);
       const pos    = ovalPosLane(rawP, offset);
       const isMe   = myStudent && s.id === myStudent.id;
-      return { s, pos, isMe, rank: i + 1 };
+      return { s, pos, isMe, rank: i + 1, rawP };
     });
 
-    // Bus kelas
-    const busProgress = classAvg / 100 * 0.5; // bus jalan setengah oval max
+    // Bus kelas — ukuran lebih kecil, posisi di dalam oval
+    const busProgress = Math.min(classAvg / 100 * 0.4, 0.4);
     const busPos      = ovalPos(busProgress);
 
     // Garis start/finish: bawah oval (progress=0)
@@ -292,13 +306,13 @@
     font-family="Arial,sans-serif" font-size="9" font-weight="900"
     fill="white" opacity="0.8">🏁 START/FINISH</text>
 
-  <!-- ── Bus Kelas ── -->
-  <g transform="translate(${busPos.x.toFixed(1)},${busPos.y.toFixed(1)})">
-    <rect x="-22" y="-13" width="44" height="18" rx="5"
-      fill="rgba(243,156,18,0.25)" stroke="#F39C12" stroke-width="1.5"/>
-    <text x="0" y="2" text-anchor="middle" font-size="14">🚌</text>
-    <text x="0" y="-15" text-anchor="middle" font-family="Arial,sans-serif"
-      font-size="8" font-weight="700" fill="#F9CA24">Kelas ${classAvg}%</text>
+  <!-- ── Bus Kelas (kecil, di dalam oval) ── -->
+  <g transform="translate(${(CX).toFixed(1)},${(CY).toFixed(1)})">
+    <text x="0" y="-8" text-anchor="middle" font-size="18">🚌</text>
+    <text x="0" y="8" text-anchor="middle" font-family="Arial,sans-serif"
+      font-size="10" font-weight="900" fill="#F9CA24">${classAvg}%</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial,sans-serif"
+      font-size="7" fill="rgba(255,255,255,0.5)">Kelas</text>
   </g>
 
   <!-- ── Mobil siswa ── -->
