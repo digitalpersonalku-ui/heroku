@@ -143,14 +143,14 @@ async function saveStoreToSupabase() {
       garage: s.garage || { colorId: 'default', stickers: [], upgrades: [], ownedColors: ['default'] },
       theme_override: s.themeOverride || null,
       tgl_lahir:     s.tglLahir      || null,
-      tempat_lahir:  s.tempatLahir   || '',
-      nis:           s.nis           || '',
-      gender:        s.gender        || '',
-      nama_ayah:     s.namaAyah      || '',
-      nama_ibu:      s.namaIbu       || '',
-      hp_ayah:       s.hpAyah        || '',
-      hp_ibu:        s.hpIbu         || '',
-      catatan:       s.catatan       || '',
+      tempat_lahir:  s.tempatLahir   || null,
+      nis:           s.nis           || null,
+      gender:        s.gender        || null,
+      nama_ayah:     s.namaAyah      || null,
+      nama_ibu:      s.namaIbu       || null,
+      hp_ayah:       s.hpAyah        || null,
+      hp_ibu:        s.hpIbu         || null,
+      catatan:       s.catatan       || null,
     }));
 
     if (rows.length) {
