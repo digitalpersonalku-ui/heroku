@@ -1,0 +1,458 @@
+// ═══════════════════════════════════════════════════════════
+// HEROKU AGE-ADAPTIVE THEME v1.0
+// Auto-detect usia dari tanggalLahir → apply tema otomatis
+//
+// File: js/age-theme.js
+// Pasang di index.html setelah grand-prix-oval.js:
+//   <script src="js/age-theme.js"></script>
+//
+// Kelompok usia:
+//   young  → 6-7  tahun → Light theme, font XL, ikon besar
+//   mid    → 8-9  tahun → Light-medium, font L, campuran
+//   senior → 10+  tahun → Dark mode (default, tidak berubah)
+//
+// Override guru: field themeOverride di data siswa
+//   null       → auto-detect dari tglLahir
+//   'young'    → paksa tema young
+//   'mid'      → paksa tema mid
+//   'senior'   → paksa tema senior (dark)
+// ═══════════════════════════════════════════════════════════
+
+(function (W) {
+  'use strict';
+
+  // ── Konstanta ─────────────────────────────────────────────
+  const AGE_GROUPS = {
+    young:  { min: 0,  max: 7,  label: 'Sahabat Kecil (6-7 thn)' },
+    mid:    { min: 8,  max: 9,  label: 'Penjelajah (8-9 thn)'    },
+    senior: { min: 10, max: 99, label: 'Pahlawan (10-12 thn)'    },
+  };
+
+  // ── CSS Themes ────────────────────────────────────────────
+  const THEMES = {
+    young: {
+      '--bg':                '#FFF8F0',
+      '--bg2':               '#FFF0E0',
+      '--card-bg':           '#FFFFFF',
+      '--card-border':       '#FFD580',
+      '--text':              '#2C3E50',
+      '--text-muted':        '#7F8C8D',
+      '--green':             '#27AE60',
+      '--green-light':       '#EAFAF1',
+      '--green-dark':        '#1E8449',
+      '--accent':            '#FF6B6B',
+      '--accent2':           '#FFB347',
+      '--header-bg':         'linear-gradient(135deg,#FF9A3C,#FF6B6B)',
+      '--font-size-base':    '16px',
+      '--font-size-sm':      '13px',
+      '--font-size-lg':      '20px',
+      '--border-radius':     '20px',
+      '--border-radius-sm':  '12px',
+      '--shadow':            '0 4px 16px rgba(255,107,107,0.15)',
+      '--coin-color':        '#FF9A3C',
+      '--streak-color':      '#FF6B6B',
+    },
+    mid: {
+      '--bg':                '#F0F4FF',
+      '--bg2':               '#E8EEFF',
+      '--card-bg':           '#FFFFFF',
+      '--card-border':       '#C5D5FF',
+      '--text':              '#1A1A2E',
+      '--text-muted':        '#5D6D7E',
+      '--green':             '#27AE60',
+      '--green-light':       '#EAFAF1',
+      '--green-dark':        '#1E8449',
+      '--accent':            '#5B86E5',
+      '--accent2':           '#36D1DC',
+      '--header-bg':         'linear-gradient(135deg,#5B86E5,#36D1DC)',
+      '--font-size-base':    '14px',
+      '--font-size-sm':      '12px',
+      '--font-size-lg':      '17px',
+      '--border-radius':     '16px',
+      '--border-radius-sm':  '10px',
+      '--shadow':            '0 4px 16px rgba(91,134,229,0.15)',
+      '--coin-color':        '#F39C12',
+      '--streak-color':      '#E74C3C',
+    },
+    senior: null, // senior = default dark, tidak perlu override
+  };
+
+  // ── Hitung usia dari tglLahir ─────────────────────────────
+  function hitungUsia(tglLahir) {
+    if (!tglLahir) return null;
+    try {
+      const lahir = new Date(tglLahir);
+      const today = new Date();
+      let usia = today.getFullYear() - lahir.getFullYear();
+      const m = today.getMonth() - lahir.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < lahir.getDate())) usia--;
+      return usia;
+    } catch (e) { return null; }
+  }
+
+  // ── Tentukan ageGroup ─────────────────────────────────────
+  function getAgeGroup(student) {
+    // Override guru selalu menang
+    if (student.themeOverride && AGE_GROUPS[student.themeOverride]) {
+      return student.themeOverride;
+    }
+    // Auto-detect dari tglLahir
+    const usia = hitungUsia(student.tglLahir);
+    if (usia === null) return 'senior'; // fallback
+    if (usia <= 7)  return 'young';
+    if (usia <= 9)  return 'mid';
+    return 'senior';
+  }
+
+  // ── Apply tema ke DOM ─────────────────────────────────────
+  function applyTheme(ageGroup) {
+    const root  = document.documentElement;
+    const body  = document.body;
+    const theme = THEMES[ageGroup];
+
+    // Set data attribute untuk CSS selector
+    body.setAttribute('data-age-group', ageGroup);
+    body.setAttribute('data-theme', ageGroup === 'senior' ? 'dark' : 'light');
+
+    // Apply CSS variables
+    if (theme) {
+      for (const [key, val] of Object.entries(theme)) {
+        root.style.setProperty(key, val);
+      }
+      // Light mode adjustments
+      body.classList.remove('theme-young', 'theme-mid', 'theme-senior');
+      body.classList.add(`theme-${ageGroup}`);
+    } else {
+      // Senior: kembalikan ke dark mode default
+      body.classList.remove('theme-young', 'theme-mid', 'theme-senior');
+      body.classList.add('theme-senior');
+      // Hapus override variables
+      const lightVars = Object.keys(THEMES.young);
+      lightVars.forEach(v => root.style.removeProperty(v));
+    }
+
+    console.log(`[AGT] Tema applied: ${ageGroup}`);
+  }
+
+  // ── Reset ke dark mode (saat logout) ─────────────────────
+  function resetTheme() {
+    const root = document.documentElement;
+    const body = document.body;
+    body.removeAttribute('data-age-group');
+    body.removeAttribute('data-theme');
+    body.classList.remove('theme-young', 'theme-mid', 'theme-senior');
+    const lightVars = Object.keys(THEMES.young);
+    lightVars.forEach(v => root.style.removeProperty(v));
+  }
+
+  // ── CSS tambahan untuk light themes ──────────────────────
+  function injectCSS() {
+    if (document.getElementById('_agt_css')) return;
+    const s = document.createElement('style');
+    s.id = '_agt_css';
+    s.textContent = `
+/* ── Base light mode overrides ── */
+body[data-theme="light"] {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* Cards */
+body[data-theme="light"] .card,
+body[data-theme="light"] [class*="card"],
+body[data-theme="light"] .habit-card,
+body[data-theme="light"] .mission-card {
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  border: 1.5px solid var(--card-border, #EEE) !important;
+}
+
+/* Header */
+body[data-theme="light"] .app-header,
+body[data-theme="light"] #app-header {
+  background: var(--header-bg) !important;
+  color: #fff !important;
+}
+
+/* Tab bar */
+body[data-theme="light"] .tab-bar,
+body[data-theme="light"] #tab-bar {
+  background: var(--card-bg) !important;
+  border-top: 1.5px solid var(--card-border, #EEE) !important;
+}
+body[data-theme="light"] .tab-btn {
+  color: var(--text-muted) !important;
+}
+body[data-theme="light"] .tab-btn.active {
+  color: var(--green) !important;
+}
+
+/* Section backgrounds */
+body[data-theme="light"] .tab-page,
+body[data-theme="light"] #page-beranda,
+body[data-theme="light"] #page-race,
+body[data-theme="light"] #page-sekolah {
+  background: var(--bg) !important;
+}
+
+/* Text colors */
+body[data-theme="light"] h1,
+body[data-theme="light"] h2,
+body[data-theme="light"] h3,
+body[data-theme="light"] .sec-title {
+  color: var(--text) !important;
+}
+
+/* Input fields */
+body[data-theme="light"] input,
+body[data-theme="light"] select,
+body[data-theme="light"] textarea {
+  background: #fff !important;
+  color: var(--text) !important;
+  border-color: var(--card-border, #DDD) !important;
+}
+
+/* ── YOUNG theme extras (6-7 thn) ── */
+body.theme-young {
+  font-size: var(--font-size-base) !important;
+}
+body.theme-young .habit-btn,
+body.theme-young .mission-item {
+  padding: 14px !important;
+  border-radius: var(--border-radius) !important;
+  font-size: var(--font-size-base) !important;
+}
+/* Sembunyikan elemen yang terlalu kompleks untuk usia 6-7 */
+body.theme-young .xp-bar-wrap,
+body.theme-young #page-garasi,
+body.theme-young [data-hide-young="true"] {
+  display: none !important;
+}
+/* Tampilkan versi sederhana */
+body.theme-young [data-show-young="true"] {
+  display: block !important;
+}
+/* Ikon misi lebih besar */
+body.theme-young .habit-icon,
+body.theme-young .mission-icon {
+  font-size: 32px !important;
+}
+
+/* ── MID theme extras (8-9 thn) ── */
+body.theme-mid {
+  font-size: var(--font-size-base) !important;
+}
+body.theme-mid [data-hide-mid="true"] {
+  display: none !important;
+}
+
+/* ── SENIOR theme (10-12 thn) — default dark, tidak diubah ── */
+body.theme-senior {
+  /* Default app.js styles berlaku */
+}
+
+/* ── Age badge di profil siswa ── */
+#_agt_badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-round, Arial, sans-serif);
+  margin-left: 6px;
+}
+#_agt_badge.young  { background: rgba(255,107,107,0.15); color: #FF6B6B; }
+#_agt_badge.mid    { background: rgba(91,134,229,0.15);  color: #5B86E5; }
+#_agt_badge.senior { background: rgba(39,174,96,0.15);   color: #27AE60; }
+
+/* ── Theme override dropdown di Admin ── */
+._agt_override_wrap {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+._agt_override_sel {
+  padding: 4px 8px;
+  border: 1.5px solid #DDD;
+  border-radius: 8px;
+  font-size: 11px;
+  font-family: var(--font-round, Arial, sans-serif);
+  cursor: pointer;
+  background: #fff;
+}
+    `;
+    document.head.appendChild(s);
+  }
+
+  // ── Inject age badge di header siswa ─────────────────────
+  function injectAgeBadge(ageGroup, usia) {
+    const existing = document.getElementById('_agt_badge');
+    if (existing) existing.remove();
+
+    const labels = { young: '🌱 Sahabat Kecil', mid: '🚀 Penjelajah', senior: '⚡ Pahlawan' };
+    const badge  = document.createElement('span');
+    badge.id        = '_agt_badge';
+    badge.className = ageGroup;
+    badge.textContent = labels[ageGroup] || '';
+
+    // Cari lokasi inject — di dekat nama siswa di header
+    const nameEl = document.querySelector('#user-name, .user-name, #header-name');
+    if (nameEl) nameEl.appendChild(badge);
+  }
+
+  // ── Override dropdown di kartu siswa (Admin) ─────────────
+  function injectOverrideDropdown(studentId, currentOverride) {
+    const cardId = `_agt_ovr_${studentId}`;
+    if (document.getElementById(cardId)) return;
+
+    // Cari card siswa yang sesuai
+    const adminCards = document.querySelectorAll('[data-student-id]');
+    adminCards.forEach(card => {
+      if (card.dataset.studentId !== studentId) return;
+      if (document.getElementById(cardId)) return;
+
+      const wrap = document.createElement('div');
+      wrap.className = '_agt_override_wrap';
+      wrap.innerHTML = `
+        <span style="font-size:10px;color:#888">🎨 Tema:</span>
+        <select class="_agt_override_sel" id="${cardId}"
+          onchange="AGT.setOverride('${studentId}', this.value)">
+          <option value="">Auto (dari usia)</option>
+          <option value="young"  ${currentOverride==='young'  ?'selected':''}>🌱 Sahabat Kecil</option>
+          <option value="mid"    ${currentOverride==='mid'    ?'selected':''}>🚀 Penjelajah</option>
+          <option value="senior" ${currentOverride==='senior' ?'selected':''}>⚡ Pahlawan</option>
+        </select>`;
+      card.appendChild(wrap);
+    });
+  }
+
+  // ── Patch login: apply tema setelah siswa login ───────────
+  function patchLogin() {
+    if (typeof W.doLogin !== 'function') return;
+    if (W.doLogin._agt_patched) return;
+    const _orig = W.doLogin;
+    W.doLogin = function () {
+      const result = _orig.apply(this, arguments);
+      // Setelah login, apply tema berdasarkan CU
+      setTimeout(() => {
+        if (W.CU && W.CRole === 'anak') {
+          const group = getAgeGroup(W.CU);
+          applyTheme(group);
+          injectAgeBadge(group, hitungUsia(W.CU.tglLahir));
+          W.AGT._currentGroup = group;
+        }
+      }, 100);
+      return result;
+    };
+    W.doLogin._agt_patched = true;
+  }
+
+  // Patch showPage agar tidak reset tema saat navigasi
+  function patchShowPage() {
+    if (typeof W.showPage !== 'function') return;
+    if (W.showPage._agt_patched) return;
+    const _orig = W.showPage;
+    W.showPage = function (page) {
+      _orig.call(this, page);
+      // Re-apply tema jika siswa sudah login
+      if (W.CU && W.CRole === 'anak' && W.AGT._currentGroup) {
+        applyTheme(W.AGT._currentGroup);
+      }
+    };
+    W.showPage._agt_patched = true;
+  }
+
+  // Patch logout: reset ke dark mode
+  function patchLogout() {
+    if (typeof W.doLogout !== 'function') return;
+    if (W.doLogout._agt_patched) return;
+    const _orig = W.doLogout;
+    W.doLogout = function () {
+      resetTheme();
+      W.AGT._currentGroup = null;
+      return _orig.apply(this, arguments);
+    };
+    W.doLogout._agt_patched = true;
+  }
+
+  // ── Public API ────────────────────────────────────────────
+  W.AGT = {
+    _currentGroup: null,
+
+    // Paksa apply tema (untuk testing)
+    apply: applyTheme,
+
+    // Reset ke dark mode
+    reset: resetTheme,
+
+    // Hitung usia siswa
+    getAge: hitungUsia,
+
+    // Dapatkan group usia
+    getGroup: getAgeGroup,
+
+    // Override tema siswa dari Admin
+    setOverride(studentId, value) {
+      const store = W.STORE || window.STORE;
+      if (!store) return;
+      const s = store.students.find(x => x.id === studentId);
+      if (!s) return;
+      s.themeOverride = value || null;
+      if (typeof saveStore === 'function') saveStore();
+      if (typeof W.showToast === 'function') {
+        const label = value
+          ? { young:'🌱 Sahabat Kecil', mid:'🚀 Penjelajah', senior:'⚡ Pahlawan' }[value]
+          : 'Auto';
+        W.showToast(`✅ Tema ${s.nickname || s.name} → ${label}`);
+      }
+    },
+
+    // Preview tema (untuk admin lihat tampilan)
+    preview(group) {
+      applyTheme(group);
+      setTimeout(() => {
+        if (W.CU && W.CRole === 'anak') {
+          applyTheme(W.AGT._currentGroup || 'senior');
+        } else {
+          resetTheme();
+        }
+      }, 3000);
+    },
+  };
+
+  // ── Boot ─────────────────────────────────────────────────
+  function boot() {
+    injectCSS();
+
+    let tries = 0;
+    const wait = setInterval(() => {
+      if (typeof W.doLogin === 'function' || tries > 80) {
+        clearInterval(wait);
+        patchLogin();
+        patchShowPage();
+        patchLogout();
+
+        // Kalau siswa sudah login (refresh halaman), apply tema langsung
+        if (W.CU && W.CRole === 'anak') {
+          const group = getAgeGroup(W.CU);
+          applyTheme(group);
+          injectAgeBadge(group, hitungUsia(W.CU.tglLahir));
+          W.AGT._currentGroup = group;
+        }
+      }
+      tries++;
+    }, 150);
+
+    console.log('[AGT] Age-Adaptive Theme v1.0 siap ✅ — tema otomatis dari usia aktif');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+})(window);

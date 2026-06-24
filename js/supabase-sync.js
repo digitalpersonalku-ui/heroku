@@ -81,6 +81,15 @@ async function loadStoreFromSupabase() {
       quizTotal: s.quiz_total,
       garage: s.garage || { colorId: 'default', stickers: [], upgrades: [], ownedColors: ['default'] },
       themeOverride: s.theme_override || null,
+      tglLahir:     s.tgl_lahir     || null,
+      tempatLahir:  s.tempat_lahir  || '',
+      nis:          s.nis           || '',
+      gender:       s.gender        || '',
+      namaAyah:     s.nama_ayah     || '',
+      namaIbu:      s.nama_ibu      || '',
+      hpAyah:       s.hp_ayah       || '',
+      hpIbu:        s.hp_ibu        || '',
+      catatan:      s.catatan       || '',
     }));
 
     const mappedStaff = (staff || []).map(a => ({
@@ -133,6 +142,15 @@ async function saveStoreToSupabase() {
       quiz_total: s.quizTotal,
       garage: s.garage || { colorId: 'default', stickers: [], upgrades: [], ownedColors: ['default'] },
       theme_override: s.themeOverride || null,
+      tgl_lahir:     s.tglLahir      || null,
+      tempat_lahir:  s.tempatLahir   || '',
+      nis:           s.nis           || '',
+      gender:        s.gender        || '',
+      nama_ayah:     s.namaAyah      || '',
+      nama_ibu:      s.namaIbu       || '',
+      hp_ayah:       s.hpAyah        || '',
+      hp_ibu:        s.hpIbu         || '',
+      catatan:       s.catatan       || '',
     }));
 
     if (rows.length) {
