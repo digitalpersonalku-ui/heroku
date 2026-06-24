@@ -182,7 +182,7 @@
       ${mods.hasNitro ? `<text x="-17" y="5" font-size="9">🔥</text>` : ''}
     </g>
     <!-- Name bubble (tidak ikut rotate) -->
-    <g transform="translate(${x.toFixed(1)},${(y - 28).toFixed(1)})">
+    <g id="_gpo_lbl_${s.id}" transform="translate(${x.toFixed(1)},${(y - 28).toFixed(1)})">
       <rect x="-20" y="-9" width="40" height="14" rx="5"
         fill="${isMe ? 'rgba(46,204,113,0.9)' : 'rgba(15,15,30,0.85)'}"/>
       <text x="0" y="1" text-anchor="middle" font-family="Arial,sans-serif"
@@ -747,9 +747,170 @@
     wrap.scrollTo({ left: scrollTo, behavior: 'smooth' });
   }
 
+  // ═══════════════════════════════════════════════════════════
+  // ANIMATION ENGINE
+  // Animasi smooth: mobil bergerak dari posisi lama ke target baru
+  // menggunakan requestAnimationFrame + easing, tanpa rebuild SVG
+  // ═══════════════════════════════════════════════════════════
+
+  const _animState = {}; // { studentId: { progress, targetProgress, offset } }
+  let   _animFrame = null;
+  let   _animRunning = false;
+
+  function initAnimState(sorted, progressList) {
+    const maxKoin = Math.max(sorted[0]?.koin || 0, 1);
+    const total   = sorted.length;
+    sorted.forEach((s, i) => {
+      if (!_animState[s.id]) {
+        // First time: mulai dari posisi saat ini
+        _animState[s.id] = {
+          progress: progressList[i],
+          target:   progressList[i],
+          offset:   laneOffset(i, total),
+        };
+      } else {
+        // Update target — mobil akan bergerak smooth ke sini
+        _animState[s.id].target = progressList[i];
+        _animState[s.id].offset = laneOffset(i, total);
+      }
+    });
+  }
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function tickAnimation() {
+    const svg = document.querySelector('#_gpo_oval_wrap svg');
+    if (!svg) { _animRunning = false; return; }
+
+    let anyMoving = false;
+    const SPEED = 0.0008; // progress per frame (tuning)
+
+    for (const [id, state] of Object.entries(_animState)) {
+      const diff = state.target - state.progress;
+      if (Math.abs(diff) < 0.0005) continue;
+
+      // Smooth lerp
+      state.progress += diff * 0.04;
+      anyMoving = true;
+
+      const pos   = ovalPosLane(state.progress, state.offset);
+      const carEl = svg.getElementById ? svg.getElementById('_gpo_car_' + id)
+                                       : document.getElementById('_gpo_car_' + id);
+      const lblEl = svg.getElementById ? svg.getElementById('_gpo_lbl_' + id)
+                                       : document.getElementById('_gpo_lbl_' + id);
+
+      if (carEl) {
+        carEl.setAttribute('transform',
+          `translate(${pos.x.toFixed(1)},${pos.y.toFixed(1)}) rotate(${pos.angle.toFixed(1)})`);
+      }
+      if (lblEl) {
+        lblEl.setAttribute('transform',
+          `translate(${pos.x.toFixed(1)},${(pos.y - 28).toFixed(1)})`);
+      }
+    }
+
+    if (anyMoving) {
+      _animFrame = requestAnimationFrame(tickAnimation);
+    } else {
+      _animRunning = false;
+    }
+  }
+
+  function startAnimation(sorted, progressList) {
+    initAnimState(sorted, progressList);
+    if (!_animRunning) {
+      _animRunning = true;
+      _animFrame   = requestAnimationFrame(tickAnimation);
+    }
+  }
+
+  function stopAnimation() {
+    if (_animFrame) cancelAnimationFrame(_animFrame);
+    _animRunning = false;
+  }
+
+  // Idle animation: mobil bergerak pelan terus (simulasi mesin hidup)
+  function startIdleAnimation() {
+    if (_idleRunning) return;
+    _idleRunning = true;
+    let tick = 0;
+
+    function idleTick() {
+      if (!_idleRunning) return;
+      const svg = document.querySelector('#_gpo_oval_wrap svg');
+      if (!svg) { _idleRunning = false; return; }
+
+      tick++;
+      // Setiap 3 detik (180 frame @ 60fps), gerakkan semua mobil sedikit
+      if (tick % 180 === 0) {
+        for (const state of Object.values(_animState)) {
+          // Gerak maju kecil (simulasi idle)
+          state.target = Math.min(state.target + 0.003, 0.98);
+        }
+        if (!_animRunning) {
+          _animRunning = true;
+          _animFrame = requestAnimationFrame(tickAnimation);
+        }
+      }
+
+      requestAnimationFrame(idleTick);
+    }
+    requestAnimationFrame(idleTick);
+  }
+
+  let _idleRunning = false;
+
+  // ── Patch renderOval agar trigger animasi setelah render ─
+  function renderOvalWithAnim() {
+    renderOval();
+    // Ambil progressList dari state terakhir
+    const ss      = getStore().students || [];
+    if (!ss.length) return;
+    const sorted  = [...ss].sort((a, b) => b.koin - a.koin || b.streak - a.streak);
+    const maxKoin = Math.max(sorted[0]?.koin || 0, 1);
+    const allZero = sorted.every(s => s.koin === 0);
+    const n       = sorted.length;
+
+    const progressList = (() => {
+      if (allZero || maxKoin === 0) {
+        return sorted.map((_, i) => 0.10 + (i / Math.max(n - 1, 1)) * 0.65);
+      }
+      const raw = sorted.map(s => 0.15 + (s.koin / maxKoin) * 0.70);
+      const MIN_GAP = 0.08;
+      for (let i = 1; i < raw.length; i++) {
+        if (raw[i-1] - raw[i] < MIN_GAP) raw[i] = raw[i-1] - MIN_GAP;
+        if (raw[i] < 0.05) raw[i] = 0.05;
+      }
+      return raw;
+    })();
+
+    // Mulai animasi
+    setTimeout(() => {
+      startAnimation(sorted, progressList);
+      setTimeout(startIdleAnimation, 1000);
+    }, 200);
+  }
+
+  // ── Nitro burst: mobil maju cepat saat check-in ──────────
+  function nitroBurst(studentId) {
+    const state = _animState[studentId];
+    if (!state) return;
+    state.target = Math.min(state.target + 0.06, 0.98);
+    if (!_animRunning) {
+      _animRunning = true;
+      _animFrame = requestAnimationFrame(tickAnimation);
+    }
+  }
+
+  // Listen event check-in untuk trigger nitro burst
+  document.addEventListener('heroku:checkin', (e) => {
+    if (e.detail?.studentId) nitroBurst(e.detail.studentId);
+  });
+
   // ── Public API ───────────────────────────────────────
   W.GPO = {
-    render: renderOval,
+    render: renderOvalWithAnim,
+    nitroBurst,
     switchTab(tab) {
       ['misi','klasemen'].forEach(t => {
         document.getElementById(`_gpo_tab_${t}`)?.classList.toggle('active', t === tab);
@@ -783,7 +944,7 @@
           const _origShow = W.showPage;
           W.showPage = function(page) {
             _origShow.call(this, page);
-            if (page === 'race') setTimeout(renderOval, 80);
+            if (page === 'race') setTimeout(renderOvalWithAnim, 80);
           };
           W.showPage._gpo_patched = true;
         }
@@ -799,19 +960,19 @@
         clearInterval(waitData);
         // Render jika halaman race aktif
         const racePage = document.getElementById('page-race');
-        if (racePage) setTimeout(renderOval, 100);
+        if (racePage) setTimeout(renderOvalWithAnim, 100);
       }
       dataWait++;
     }, 200);
 
     // Listen HeroKuEvents untuk re-render saat data berubah
     document.addEventListener('heroku:pageSwitch', (e) => {
-      if (e.detail?.page === 'race') setTimeout(renderOval, 80);
+      if (e.detail?.page === 'race') setTimeout(renderOvalWithAnim, 80);
     });
     // Fallback: listen klik tab Balapan
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[onclick]');
-      if (btn && btn.getAttribute('onclick')?.includes('race')) setTimeout(renderOval, 150);
+      if (btn && btn.getAttribute('onclick')?.includes('race')) setTimeout(renderOvalWithAnim, 150);
     });
 
     exposeStore();
