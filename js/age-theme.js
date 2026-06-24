@@ -423,17 +423,57 @@ body.theme-senior {
     },
   };
 
+  // ── Mapping sistem lama ke AGT ───────────────────────────
+  // app.js pakai: theme-muda, theme-menengah, theme-dewasa
+  // AGT pakai:    young, mid, senior
+  const OLD_TO_NEW = { muda: 'young', menengah: 'mid', dewasa: 'senior' };
+  const NEW_TO_OLD = { young: 'muda', mid: 'menengah', senior: 'dewasa' };
+
+  // Patch applyAgeThemeClass agar AGT ikut jalan setiap kali app.js apply tema
+  function patchApplyAgeThemeClass() {
+    if (typeof W.applyAgeThemeClass !== 'function') return;
+    if (W.applyAgeThemeClass._agt_patched) return;
+    const _orig = W.applyAgeThemeClass;
+    W.applyAgeThemeClass = function () {
+      _orig.call(this);
+      // Setelah sistem lama apply class-nya, AGT apply CSS variables
+      if (W.CU && W.CRole === 'anak') {
+        const group = getAgeGroup(W.CU);
+        applyTheme(group);
+        W.AGT._currentGroup = group;
+      }
+    };
+    W.applyAgeThemeClass._agt_patched = true;
+  }
+
+  // Sembunyikan pilih tampilan manual (theme-selector-wrap)
+  // karena sekarang tema otomatis dari usia
+  function hideManualThemeSelector() {
+    const wrap = document.getElementById('theme-selector-wrap');
+    if (wrap) wrap.style.display = 'none';
+    // Juga hide jika dirender ulang
+    if (!W._agt_obs) {
+      W._agt_obs = new MutationObserver(() => {
+        const w = document.getElementById('theme-selector-wrap');
+        if (w && w.style.display !== 'none') w.style.display = 'none';
+      });
+      W._agt_obs.observe(document.body, { childList: true, subtree: true });
+    }
+  }
+
   // ── Boot ─────────────────────────────────────────────────
   function boot() {
     injectCSS();
 
     let tries = 0;
     const wait = setInterval(() => {
-      if (typeof W.doLogin === 'function' || tries > 80) {
+      if (typeof W.applyAgeThemeClass === 'function' || tries > 80) {
         clearInterval(wait);
+        patchApplyAgeThemeClass();
         patchLogin();
         patchShowPage();
         patchLogout();
+        hideManualThemeSelector();
 
         // Kalau siswa sudah login (refresh halaman), apply tema langsung
         if (W.CU && W.CRole === 'anak') {
