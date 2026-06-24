@@ -841,16 +841,24 @@
       if (!svg) { _idleRunning = false; return; }
 
       tick++;
-      // Setiap 3 detik (180 frame @ 60fps), gerakkan semua mobil sedikit
-      if (tick % 180 === 0) {
+      // Setiap 4 detik (240 frame @ 60fps), animasi roda berputar kecil
+      // TIDAK mengubah posisi — hanya efek visual subtle (wheel wobble)
+      if (tick % 240 === 0) {
+        // Wheel wobble: gerak maju 0.001 lalu balik — tidak mengubah ranking
         for (const state of Object.values(_animState)) {
-          // Gerak maju kecil (simulasi idle)
-          state.target = Math.min(state.target + 0.003, 0.98);
+          const wobble = 0.001;
+          state.target = state.progress + wobble;
         }
         if (!_animRunning) {
           _animRunning = true;
           _animFrame = requestAnimationFrame(tickAnimation);
         }
+        // Reset ke posisi asli setelah 0.5 detik
+        setTimeout(() => {
+          for (const state of Object.values(_animState)) {
+            state.target = state.progress;
+          }
+        }, 500);
       }
 
       requestAnimationFrame(idleTick);
