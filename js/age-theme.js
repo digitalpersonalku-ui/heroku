@@ -385,8 +385,123 @@ body.theme-young [class*="streak"] {
   animation: _agt_twinkle 2s ease infinite !important;
 }
 
-/* ── Sembunyikan elemen terlalu kompleks ── */
+/* ── SIMPLIFY CARD MISI untuk anak 6-7 tahun ──────────────
+   Layout baru: ikon BESAR di kiri, nama saja, tombol BESAR
+   Sembunyikan teks kecil yang susah dibaca
+   ─────────────────────────────────────────────────────── */
+
+/* Sembunyikan deskripsi dan reward — terlalu padat */
+body.theme-young .h-desc  { display: none !important; }
+body.theme-young .h-reward { display: none !important; }
+
+/* Nama habit lebih besar, jelas */
+body.theme-young .h-name {
+  font-size: 19px !important;
+  font-weight: 900 !important;
+  color: #2C3E50 !important;
+  line-height: 1.2 !important;
+}
+
+/* Card layout 2-kolom: ikon kiri, nama tengah, centang kanan */
+body.theme-young .habit-card {
+  min-height: 72px !important;
+}
+
+/* Ikon jauh lebih besar */
+body.theme-young .h-icon {
+  width: 60px !important;
+  height: 60px !important;
+  font-size: 32px !important;
+  border-radius: 20px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Tombol centang SANGAT BESAR — mudah dipencet anak kecil */
+body.theme-young .hchk {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  border: 4px solid #E0E0E0 !important;
+  background: #FAFAFA !important;
+  flex-shrink: 0 !important;
+  font-size: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+body.theme-young .habit-card.checked .hchk {
+  background: #4CAF50 !important;
+  border-color: #388E3C !important;
+  color: #fff !important;
+  font-size: 28px !important;
+}
+
+/* Badge koin kecil di pojok kanan atas card */
+body.theme-young .habit-card::after {
+  content: attr(data-koin);
+  position: absolute !important;
+  top: 8px !important;
+  right: 70px !important;
+  background: #FFF3E0 !important;
+  color: #FF9800 !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  padding: 2px 6px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid #FFE082 !important;
+}
+body.theme-young .habit-card { position: relative !important; }
+
+/* Grid misi 1 kolom penuh, bukan list kecil */
+body.theme-young #habits-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 0 4px !important;
+}
+
+/* Judul "Misi Hari Ini" lebih besar */
+body.theme-young .sec-title {
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  color: #E65100 !important;
+  margin-bottom: 12px !important;
+}
+
+/* Progress bar misi di bawah judul */
+body.theme-young #habit-note {
+  font-size: 13px !important;
+  color: #FF9800 !important;
+  font-weight: 700 !important;
+  background: #FFF8E7 !important;
+  border-radius: 12px !important;
+  padding: 6px 12px !important;
+  margin-bottom: 8px !important;
+  text-align: center !important;
+}
+
+/* Sembunyikan elemen terlalu kompleks */
 body.theme-young [data-hide-young="true"] { display: none !important; }
+
+/* World display lebih cerah */
+body.theme-young #world-display {
+  border-radius: 24px !important;
+  overflow: hidden !important;
+}
+
+/* Streak counter lebih besar */
+body.theme-young .streak-num {
+  font-size: 32px !important;
+  font-weight: 900 !important;
+}
+
+/* Koin display berwarna */
+body.theme-young .koin-num,
+body.theme-young #koin-display {
+  color: #FF9800 !important;
+  font-size: 24px !important;
+  font-weight: 900 !important;
+}
 
 /* ── MID theme extras (8-9 thn) ── */
 body.theme-mid {
