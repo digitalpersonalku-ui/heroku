@@ -114,19 +114,26 @@
     body.setAttribute('data-age-group', ageGroup);
     body.setAttribute('data-theme', ageGroup === 'senior' ? 'dark' : 'light');
 
-    // Apply CSS variables
+    // Mapping AGT group → class lama (untuk compatibility style.css)
+    const OLD_CLASS = { young: 'theme-muda', mid: 'theme-menengah', senior: 'theme-dewasa' };
+
+    // Hapus semua class tema lama dan baru
+    body.classList.remove(
+      'theme-young','theme-mid','theme-senior',
+      'theme-muda','theme-menengah','theme-dewasa'
+    );
+
     if (theme) {
+      // Apply CSS variables
       for (const [key, val] of Object.entries(theme)) {
         root.style.setProperty(key, val);
       }
-      // Light mode adjustments
-      body.classList.remove('theme-young', 'theme-mid', 'theme-senior');
+      // Apply class baru (AGT) + class lama (untuk style.css compatibility)
       body.classList.add(`theme-${ageGroup}`);
+      if (OLD_CLASS[ageGroup]) body.classList.add(OLD_CLASS[ageGroup]);
     } else {
-      // Senior: kembalikan ke dark mode default
-      body.classList.remove('theme-young', 'theme-mid', 'theme-senior');
-      body.classList.add('theme-senior');
-      // Hapus override variables
+      // Senior: dark mode default
+      body.classList.add('theme-senior', 'theme-dewasa');
       const lightVars = Object.keys(THEMES.young);
       lightVars.forEach(v => root.style.removeProperty(v));
     }
