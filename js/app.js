@@ -211,10 +211,21 @@ function setThemePreference(themeKey){
 // Menempelkan class CSS sesuai kelompok usia aktif ke <body>,
 // supaya style.css bisa menyesuaikan tampilan tanpa perlu duplikasi HTML.
 function applyAgeThemeClass(){
-  document.body.classList.remove('theme-muda','theme-menengah','theme-dewasa');
+  document.body.classList.remove('theme-muda','theme-menengah','theme-dewasa','theme-young','theme-mid','theme-senior');
   if(CRole === 'anak' && CU){
     const activeGroup = getActiveThemeGroup(CU);
     document.body.classList.add('theme-' + activeGroup);
+    // AGT: tambah class baru berdasarkan tanggal lahir
+    const tgl = CU.tglLahir;
+    if(tgl){
+      const lahir = new Date(tgl);
+      const today = new Date();
+      let usia = today.getFullYear() - lahir.getFullYear();
+      const m = today.getMonth() - lahir.getMonth();
+      if(m < 0 || (m === 0 && today.getDate() < lahir.getDate())) usia--;
+      const agtGroup = usia <= 7 ? 'young' : usia <= 9 ? 'mid' : 'senior';
+      document.body.classList.add('theme-' + agtGroup);
+    }
   }
 }
 
