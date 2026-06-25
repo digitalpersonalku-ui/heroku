@@ -1025,8 +1025,28 @@
   }
 
   // MutationObserver: jalankan SEGERA, tidak perlu tunggu boot()
-  // Ini memastikan form lama selalu tersembunyi kapanpun DOM berubah
   (function startObserver() {
+    function injectAddBtn() {
+      if (document.getElementById('_sf_add_main_btn')) return;
+      const hdr = document.querySelector('.admin-hdr') ||
+                  document.querySelector('#page-admin > div:first-child');
+      if (!hdr) return;
+      const btn = document.createElement('button');
+      btn.id = '_sf_add_main_btn';
+      btn.innerHTML = '➕ Tambah Siswa Baru';
+      btn.setAttribute('onclick', 'SF.open()');
+      btn.style.cssText = [
+        'width:100%','margin:10px 0 0','padding:13px',
+        'background:linear-gradient(135deg,#27AE60,#1E8449)',
+        'color:#fff','border:none','border-radius:12px',
+        'font-size:15px','font-weight:700','cursor:pointer',
+        'font-family:var(--font-round,inherit)',
+        'box-shadow:0 4px 12px rgba(39,174,96,.35)',
+        'display:block',
+      ].join(';');
+      hdr.insertAdjacentElement('afterend', btn);
+    }
+
     function hideOldFormNow() {
       const el = document.getElementById('single-add-mode');
       if (el && el.style.display !== 'none') {
@@ -1034,10 +1054,10 @@
         const card = el.closest('.card');
         if (card) card.style.display = 'none';
       }
+      injectAddBtn();
     }
-    // Sembunyikan langsung jika sudah ada
+
     hideOldFormNow();
-    // Observer untuk sembunyikan saat muncul kembali
     if (!W._sf_obs) {
       W._sf_obs = new MutationObserver(hideOldFormNow);
       W._sf_obs.observe(document.body, { childList: true, subtree: true });
