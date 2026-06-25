@@ -587,6 +587,240 @@ body.theme-young div{
   color:#1E1B18;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TEMA MID (8-9 tahun) — Petualangan & Koleksi
+   Dark adventure, neon accents, gamifikasi kuat
+   ═══════════════════════════════════════════════════════════ */
+
+body.theme-mid,
+body.theme-menengah {
+  --mid-bg:      #0D1B2A;
+  --mid-surface: #1B2B3A;
+  --mid-card:    #1E3448;
+  --mid-green:   #00E676;
+  --mid-gold:    #FFD600;
+  --mid-teal:    #00BCD4;
+  --mid-text:    #FFFFFF;
+  --mid-text2:   rgba(255,255,255,0.75);
+  --green:#00E676;--green-dark:#00C853;--green-light:rgba(0,230,118,0.12);
+  --font-round:'Varela Round','Trebuchet MS',sans-serif;
+}
+
+/* Background petualangan gelap */
+body.theme-mid,
+body.theme-menengah {
+  background:#0D1B2A!important;
+  color:#fff!important;
+}
+
+body.theme-mid #page-beranda,
+body.theme-menengah #page-beranda {
+  background:#0D1B2A!important;
+}
+
+/* Topbar dark teal */
+body.theme-mid .topbar,
+body.theme-menengah .topbar {
+  background:linear-gradient(135deg,#0D3B5E,#1B2B3A)!important;
+  border-bottom:2px solid #00BCD4!important;
+}
+body.theme-mid .topbar-name,
+body.theme-menengah .topbar-name {
+  color:#fff!important;
+  font-weight:900!important;
+}
+body.theme-mid .topbar-logo,
+body.theme-menengah .topbar-logo { color:#FFD600!important; }
+
+/* Bottom nav */
+body.theme-mid .bottom-nav,
+body.theme-menengah .bottom-nav {
+  background:#1B2B3A!important;
+  border-top:2px solid #00BCD4!important;
+}
+body.theme-mid .nav-label,
+body.theme-menengah .nav-label { color:rgba(255,255,255,0.5)!important; }
+body.theme-mid .nav-item.active .nav-label,
+body.theme-menengah .nav-item.active .nav-label { color:#00E676!important; }
+body.theme-mid .nav-item.active .nav-icon,
+body.theme-menengah .nav-item.active .nav-icon { color:#00E676!important; }
+
+/* Cards umum */
+body.theme-mid .card,
+body.theme-menengah .card {
+  background:#1E3448!important;
+  border:1.5px solid rgba(0,188,212,0.3)!important;
+  border-radius:18px!important;
+  color:#fff!important;
+}
+
+/* Hero card */
+body.theme-mid .hero,
+body.theme-menengah .hero {
+  background:linear-gradient(135deg,#0D3B5E,#1B5E8A)!important;
+  border:2px solid #00BCD4!important;
+  border-radius:22px!important;
+  box-shadow:0 0 20px rgba(0,188,212,0.3)!important;
+}
+body.theme-mid .hero-name,
+body.theme-menengah .hero-name {
+  color:#fff!important;
+  font-size:24px!important;
+  font-weight:900!important;
+}
+body.theme-mid .hstat,
+body.theme-menengah .hstat {
+  background:rgba(0,0,0,0.3)!important;
+  border-radius:12px!important;
+}
+body.theme-mid .hstat-num,
+body.theme-menengah .hstat-num {
+  color:#FFD600!important;
+  font-size:22px!important;
+  font-weight:900!important;
+}
+body.theme-mid .hstat-label,
+body.theme-menengah .hstat-label {
+  color:rgba(255,255,255,0.7)!important;
+}
+
+/* HABIT CARDS — Adventure style */
+body.theme-mid .habit-card,
+body.theme-menengah .habit-card {
+  background:#1E3448!important;
+  border-radius:16px!important;
+  padding:14px 16px!important;
+  margin-bottom:10px!important;
+  border:1.5px solid rgba(0,188,212,0.25)!important;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3)!important;
+  position:relative!important;
+}
+body.theme-mid .habit-card:active,
+body.theme-menengah .habit-card:active {
+  transform:scale(0.98)!important;
+  border-color:#00BCD4!important;
+}
+body.theme-mid .habit-card.checked,
+body.theme-menengah .habit-card.checked {
+  background:#0D2E1A!important;
+  border-color:#00E676!important;
+  box-shadow:0 4px 12px rgba(0,230,118,0.2)!important;
+}
+
+/* Warna border neon per habit */
+body.theme-mid .habit-card:nth-child(1){ border-color:rgba(255,214,0,0.5)!important; }
+body.theme-mid .habit-card:nth-child(2){ border-color:rgba(0,230,118,0.5)!important; }
+body.theme-mid .habit-card:nth-child(3){ border-color:rgba(0,188,212,0.5)!important; }
+body.theme-mid .habit-card:nth-child(4){ border-color:rgba(0,230,118,0.5)!important; }
+body.theme-mid .habit-card:nth-child(5){ border-color:rgba(255,214,0,0.5)!important; }
+body.theme-mid .habit-card:nth-child(6){ border-color:rgba(0,188,212,0.5)!important; }
+body.theme-mid .habit-card:nth-child(7){ border-color:rgba(0,230,118,0.5)!important; }
+body.theme-menengah .habit-card:nth-child(1){ border-color:rgba(255,214,0,0.5)!important; }
+body.theme-menengah .habit-card:nth-child(2){ border-color:rgba(0,230,118,0.5)!important; }
+body.theme-menengah .habit-card:nth-child(3){ border-color:rgba(0,188,212,0.5)!important; }
+body.theme-menengah .habit-card:nth-child(4){ border-color:rgba(0,230,118,0.5)!important; }
+body.theme-menengah .habit-card:nth-child(5){ border-color:rgba(255,214,0,0.5)!important; }
+body.theme-menengah .habit-card:nth-child(6){ border-color:rgba(0,188,212,0.5)!important; }
+body.theme-menengah .habit-card:nth-child(7){ border-color:rgba(0,230,118,0.5)!important; }
+
+/* Ikon habit */
+body.theme-mid .h-icon,
+body.theme-menengah .h-icon {
+  width:50px!important;
+  height:50px!important;
+  font-size:26px!important;
+  border-radius:14px!important;
+  background:rgba(0,0,0,0.3)!important;
+}
+
+/* Nama habit — putih tegas */
+body.theme-mid .h-name,
+body.theme-menengah .h-name {
+  font-size:15px!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+body.theme-mid .h-desc,
+body.theme-menengah .h-desc {
+  color:rgba(255,255,255,0.6)!important;
+  font-size:11px!important;
+}
+body.theme-mid .h-reward,
+body.theme-menengah .h-reward {
+  color:#FFD600!important;
+  font-size:11px!important;
+  font-weight:700!important;
+}
+
+/* Tombol centang — neon green */
+body.theme-mid .hchk,
+body.theme-menengah .hchk {
+  width:36px!important;
+  height:36px!important;
+  border-radius:50%!important;
+  border:2.5px solid rgba(255,255,255,0.2)!important;
+  background:rgba(0,0,0,0.2)!important;
+}
+body.theme-mid .habit-card.checked .hchk,
+body.theme-menengah .habit-card.checked .hchk {
+  background:#00E676!important;
+  border-color:#00C853!important;
+  color:#0D1B2A!important;
+}
+
+/* Mentor/Syekh card */
+body.theme-mid .mentor-card,
+body.theme-menengah .mentor-card {
+  background:#1E3448!important;
+  border:1.5px solid rgba(0,188,212,0.4)!important;
+  border-radius:18px!important;
+  color:#fff!important;
+}
+body.theme-mid .mentor-card p,
+body.theme-menengah .mentor-card p,
+body.theme-mid .mentor-card [class*="msg"],
+body.theme-menengah .mentor-card [class*="msg"] {
+  color:rgba(255,255,255,0.9)!important;
+}
+
+/* Sec title */
+body.theme-mid .sec-title,
+body.theme-menengah .sec-title {
+  color:#00BCD4!important;
+  font-size:16px!important;
+  font-weight:900!important;
+}
+
+/* XP bar neon */
+body.theme-mid .xp-bar,
+body.theme-menengah .xp-bar {
+  background:rgba(255,255,255,0.1)!important;
+  border-radius:10px!important;
+}
+body.theme-mid .xp-fill,
+body.theme-menengah .xp-fill {
+  background:linear-gradient(90deg,#00BCD4,#00E676)!important;
+  border-radius:10px!important;
+}
+
+/* Streak row */
+body.theme-mid .streak-row,
+body.theme-menengah .streak-row {
+  background:#1E3448!important;
+  border:1.5px solid rgba(0,188,212,0.3)!important;
+  border-radius:16px!important;
+}
+
+/* Teks umum */
+body.theme-mid p,
+body.theme-mid span,
+body.theme-mid div,
+body.theme-menengah p,
+body.theme-menengah span,
+body.theme-menengah div {
+  color:#fff;
+}
+
 /* ───────────────────────────────────────────
    TEMA MENENGAH (9-11 tahun) — Default
    Tidak ada override; tampilan dasar yang sudah ada
