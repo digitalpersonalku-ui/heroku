@@ -708,7 +708,7 @@ body.theme-senior {
     const _orig = W.applyAgeThemeClass;
     W.applyAgeThemeClass = function () {
       _orig.call(this);
-      // Setelah sistem lama apply class-nya, AGT apply CSS variables
+      // Setelah sistem lama apply class-nya, tambah class AGT
       if (W.CU && W.CRole === 'anak') {
         const group = getAgeGroup(W.CU);
         applyTheme(group);
@@ -716,6 +716,21 @@ body.theme-senior {
       }
     };
     W.applyAgeThemeClass._agt_patched = true;
+  }
+
+  // Tambahan: MutationObserver untuk pastikan theme-young selalu ada
+  function watchBodyClass() {
+    if (W._agt_class_obs) return;
+    W._agt_class_obs = new MutationObserver(() => {
+      if (!W.CU || W.CRole !== 'anak') return;
+      const group = W.AGT._currentGroup;
+      if (!group || group === 'senior') return;
+      // Kalau class theme-young/mid hilang, tambah lagi
+      if (!document.body.classList.contains(`theme-${group}`)) {
+        document.body.classList.add(`theme-${group}`);
+      }
+    });
+    W._agt_class_obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
 
   // Sembunyikan pilih tampilan manual (theme-selector-wrap)
@@ -758,6 +773,7 @@ body.theme-senior {
       tries++;
     }, 150);
 
+    watchBodyClass();
     console.log('[AGT] Age-Adaptive Theme v1.0 siap ✅ — tema otomatis dari usia aktif');
   }
 
