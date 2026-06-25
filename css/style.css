@@ -363,179 +363,186 @@ body.theme-muda .mentor-av{font-size:26px!important}
 
 
 /* ═══════════════════════════════════════════════════════════
-   TEMA YOUNG (6-7 tahun) — Visual-Audio Dominan, Super Playful
-   Warna bold & kontras, ikon besar, tombol ramah jari anak
+   TEMA YOUNG (6-7 tahun) — High Contrast, Bold, Playful
+   Warna solid kontras tinggi, aman untuk penglihatan anak
    ═══════════════════════════════════════════════════════════ */
 body.theme-young{
-  --green:#27AE60;--green-dark:#1E8449;--green-light:#EAFAF1;
-  --amber:#FF9800;--purple:#9C27B0;--blue:#2196F3;--coral:#FF5722;
-  --dark:#2C3E50;--bg:#FFF8E7;--border:#FFE082;
+  --green:#1B8A3E;--green-dark:#156B30;--green-light:#E8F5EC;
+  --amber:#E07B00;--purple:#6A1B9A;--blue:#0D47A1;--coral:#C62828;
+  --dark:#1A1A1A;--bg:#FFF8E7;--border:#E0A800;
   --font-round:'Varela Round','Comic Sans MS','Trebuchet MS',sans-serif;
 }
 
-/* Background ceria */
 body.theme-young{ background:#FFF8E7!important; }
 
-/* Topbar oranye cerah */
+/* Topbar — oranye solid gelap, kontras tinggi */
 body.theme-young .topbar{
-  background:linear-gradient(135deg,#FF6B35,#FF9A3C)!important;
-  border-radius:0 0 24px 24px!important;
+  background:#E65100!important;
+  border-radius:0 0 20px 20px!important;
 }
-body.theme-young .topbar-name{color:#fff!important;font-size:18px!important;font-weight:900!important}
-body.theme-young .topbar-sub{color:rgba(255,255,255,0.85)!important}
-body.theme-young .topbar-logo{color:#fff!important;font-size:24px!important}
+body.theme-young .topbar-name{color:#fff!important;font-size:17px!important;font-weight:900!important}
+body.theme-young .topbar-sub{color:rgba(255,255,255,0.9)!important}
+body.theme-young .topbar-logo{color:#FFE082!important;font-size:22px!important}
 
 /* Bottom nav */
 body.theme-young .bottom-nav{
   background:#fff!important;
-  border-top:3px solid #FFE082!important;
-  border-radius:20px 20px 0 0!important;
+  border-top:3px solid #E65100!important;
 }
-body.theme-young .nav-label{color:#BDBDBD!important;font-size:11px!important}
-body.theme-young .nav-item.active .nav-label{color:#FF6B35!important}
-body.theme-young .nav-item.active .nav-icon{color:#FF6B35!important}
+body.theme-young .nav-label{color:#757575!important;font-size:11px!important;font-weight:700!important}
+body.theme-young .nav-item.active .nav-label{color:#E65100!important}
+body.theme-young .nav-item.active .nav-icon{color:#E65100!important}
 
 /* Cards umum */
-body.theme-young .card,
-body.theme-young .habit-card,
-body.theme-young .mentor-card{
-  border-radius:22px!important;
-  border:2.5px solid #FFE082!important;
+body.theme-young .card{
+  border-radius:20px!important;
+  border:2px solid #E0A800!important;
   background:#fff!important;
-  box-shadow:0 4px 0 #FFD54F!important;
 }
 
-/* Hero card */
+/* Hero card — oranye solid */
 body.theme-young .hero{
-  border-radius:28px!important;
-  background:linear-gradient(135deg,#FF9A3C,#FFB347)!important;
+  border-radius:24px!important;
+  background:#E65100!important;
   border:none!important;
-  box-shadow:0 6px 0 #FF9800!important;
 }
 body.theme-young .hero-name{
-  font-size:28px!important;
+  font-size:26px!important;
   font-weight:900!important;
   color:#fff!important;
 }
-body.theme-young .hstat{border-radius:16px!important;background:rgba(255,255,255,0.25)!important}
-body.theme-young .hstat-num{font-size:26px!important;font-weight:900!important;color:#fff!important}
-body.theme-young .hstat-label{color:rgba(255,255,255,0.85)!important;font-size:11px!important}
+body.theme-young .hstat{
+  border-radius:12px!important;
+  background:rgba(0,0,0,0.2)!important;
+}
+body.theme-young .hstat-num{
+  font-size:24px!important;
+  font-weight:900!important;
+  color:#fff!important;
+}
+body.theme-young .hstat-label{
+  color:rgba(255,255,255,0.9)!important;
+  font-size:11px!important;
+  font-weight:700!important;
+}
 
-/* ── HABIT CARDS — Simpel & Besar ── */
+/* ── HABIT CARDS — Bold & High Contrast ── */
 body.theme-young .habit-card{
   padding:14px 16px!important;
-  margin-bottom:12px!important;
-  border:3px solid #FFE082!important;
-  box-shadow:0 5px 0 #FFD54F!important;
-  transition:transform .15s,box-shadow .15s!important;
+  margin-bottom:10px!important;
+  background:#fff!important;
+  border-radius:18px!important;
+  border:3px solid #E0A800!important;
+  box-shadow:0 4px 0 #B8860B!important;
 }
 body.theme-young .habit-card:active{
   transform:translateY(3px)!important;
-  box-shadow:0 2px 0 #FFD54F!important;
+  box-shadow:0 1px 0 #B8860B!important;
 }
 body.theme-young .habit-card.checked{
-  border-color:#A5D6A7!important;
-  box-shadow:0 5px 0 #81C784!important;
-  background:#F1F8E9!important;
+  background:#E8F5EC!important;
+  border-color:#1B8A3E!important;
+  box-shadow:0 4px 0 #156B30!important;
 }
 
-/* Warna border berbeda tiap habit */
-body.theme-young .habit-card:nth-child(1){border-color:#FFB74D!important;box-shadow:0 5px 0 #FFA726!important}
-body.theme-young .habit-card:nth-child(2){border-color:#CE93D8!important;box-shadow:0 5px 0 #AB47BC!important}
-body.theme-young .habit-card:nth-child(3){border-color:#80DEEA!important;box-shadow:0 5px 0 #26C6DA!important}
-body.theme-young .habit-card:nth-child(4){border-color:#A5D6A7!important;box-shadow:0 5px 0 #66BB6A!important}
-body.theme-young .habit-card:nth-child(5){border-color:#90CAF9!important;box-shadow:0 5px 0 #42A5F5!important}
-body.theme-young .habit-card:nth-child(6){border-color:#FFCC80!important;box-shadow:0 5px 0 #FFA726!important}
-body.theme-young .habit-card:nth-child(7){border-color:#CF94DA!important;box-shadow:0 5px 0 #AB47BC!important}
+/* Warna border BOLD berbeda tiap habit */
+body.theme-young .habit-card:nth-child(1){border-color:#E65100!important;box-shadow:0 4px 0 #BF360C!important}
+body.theme-young .habit-card:nth-child(2){border-color:#6A1B9A!important;box-shadow:0 4px 0 #4A148C!important}
+body.theme-young .habit-card:nth-child(3){border-color:#0277BD!important;box-shadow:0 4px 0 #01579B!important}
+body.theme-young .habit-card:nth-child(4){border-color:#2E7D32!important;box-shadow:0 4px 0 #1B5E20!important}
+body.theme-young .habit-card:nth-child(5){border-color:#1565C0!important;box-shadow:0 4px 0 #0D47A1!important}
+body.theme-young .habit-card:nth-child(6){border-color:#E07B00!important;box-shadow:0 4px 0 #B35B00!important}
+body.theme-young .habit-card:nth-child(7){border-color:#6A1B9A!important;box-shadow:0 4px 0 #4A148C!important}
 
 /* Ikon habit BESAR */
 body.theme-young .h-icon{
-  width:60px!important;
-  height:60px!important;
-  font-size:32px!important;
-  border-radius:20px!important;
+  width:58px!important;
+  height:58px!important;
+  font-size:30px!important;
+  border-radius:16px!important;
   flex-shrink:0!important;
 }
 
-/* Nama habit besar, bersih */
+/* Nama habit — hitam solid, besar */
 body.theme-young .h-name{
   font-size:18px!important;
   font-weight:900!important;
-  color:#2C3E50!important;
+  color:#1A1A1A!important;
   margin-bottom:0!important;
 }
 
-/* SEMBUNYIKAN teks kecil — terlalu padat untuk anak 6-7 */
+/* Sembunyikan teks kecil */
 body.theme-young .h-desc{ display:none!important; }
 body.theme-young .h-reward{ display:none!important; }
 
-/* Tombol centang SANGAT BESAR */
+/* Tombol centang BESAR */
 body.theme-young .hchk{
-  width:52px!important;
-  height:52px!important;
+  width:50px!important;
+  height:50px!important;
   border-radius:50%!important;
-  border:4px solid #E0E0E0!important;
+  border:3px solid #BDBDBD!important;
   font-size:0!important;
   flex-shrink:0!important;
-  background:#FAFAFA!important;
+  background:#F5F5F5!important;
 }
 body.theme-young .habit-card.checked .hchk{
-  background:#4CAF50!important;
-  border-color:#388E3C!important;
-  font-size:26px!important;
+  background:#1B8A3E!important;
+  border-color:#156B30!important;
+  font-size:24px!important;
   color:#fff!important;
-}
-
-/* Animasi centang */
-@keyframes _young_pop{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.2)}
-  100%{transform:scale(1)}
-}
-body.theme-young .habit-card.checked .hchk{
-  animation:_young_pop .3s ease!important;
 }
 
 /* Mentor/Syekh card */
 body.theme-young .mentor-card{
-  border:3px solid #CE93D8!important;
-  box-shadow:0 5px 0 #AB47BC!important;
+  border:3px solid #6A1B9A!important;
+  box-shadow:0 4px 0 #4A148C!important;
+  background:#fff!important;
 }
-body.theme-young .mentor-av{font-size:32px!important}
+
+/* Teks dalam mentor card */
+body.theme-young .mentor-card p,
+body.theme-young .mentor-card .mentor-msg{
+  color:#1A1A1A!important;
+  font-size:14px!important;
+}
 
 /* Button besar */
 body.theme-young .btn-go,
 body.theme-young .btn-confirm,
 body.theme-young .btn-next{
-  border-radius:20px!important;
-  font-size:17px!important;
-  padding:16px!important;
+  border-radius:16px!important;
+  font-size:16px!important;
+  padding:14px!important;
   font-weight:900!important;
 }
 
 /* Nav icons lebih besar */
-body.theme-young .nav-icon{font-size:26px!important}
+body.theme-young .nav-icon{font-size:24px!important}
 
-/* Animasi napas hero */
-body.theme-young .hero{animation:_young_breathe 4s ease-in-out infinite!important}
-@keyframes _young_breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.01)}}
-
-/* Sec title */
+/* Sec title — warna gelap kontras */
 body.theme-young .sec-title{
-  font-size:19px!important;
+  font-size:18px!important;
   font-weight:900!important;
   color:#E65100!important;
 }
 
-/* Note habit */
-body.theme-young #habit-note{
-  font-size:13px!important;
-  color:#FF9800!important;
-  font-weight:700!important;
-  background:#FFF3E0!important;
-  border-radius:12px!important;
-  padding:6px 12px!important;
-  text-align:center!important;
+/* Streak/weekly tracker */
+body.theme-young .week-strip,
+body.theme-young [class*="week"]{
+  background:#fff!important;
+  border:2px solid #E0A800!important;
+  border-radius:16px!important;
+}
+
+/* Progress bar */
+body.theme-young .xp-bar{ 
+  border-radius:10px!important;
+  height:10px!important;
+  background:#E0E0E0!important;
+}
+body.theme-young .xp-fill{ 
+  background:#E65100!important;
+  border-radius:10px!important;
 }
 
 /* ───────────────────────────────────────────
