@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════
-// HEROKU STUDENT FORM v2.0
-// Form manajemen siswa lengkap — Fix edit duplikat + hide form lama
+// HEROKU STUDENT FORM v1.0
+// Form manajemen siswa lengkap
 //
-// File: js/student-form-v2.js
+// File: js/student-form.js
 // Pasang setelah verify-upgrade.js:
 //   <script src="js/student-form.js"></script>
 //
@@ -1023,6 +1023,26 @@
       if (e.target === this) SF.close();
     });
   }
+
+  // MutationObserver: jalankan SEGERA, tidak perlu tunggu boot()
+  // Ini memastikan form lama selalu tersembunyi kapanpun DOM berubah
+  (function startObserver() {
+    function hideOldFormNow() {
+      const el = document.getElementById('single-add-mode');
+      if (el && el.style.display !== 'none') {
+        el.style.display = 'none';
+        const card = el.closest('.card');
+        if (card) card.style.display = 'none';
+      }
+    }
+    // Sembunyikan langsung jika sudah ada
+    hideOldFormNow();
+    // Observer untuk sembunyikan saat muncul kembali
+    if (!W._sf_obs) {
+      W._sf_obs = new MutationObserver(hideOldFormNow);
+      W._sf_obs.observe(document.body, { childList: true, subtree: true });
+    }
+  })();
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
