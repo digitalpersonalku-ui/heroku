@@ -363,111 +363,144 @@ body.theme-muda .mentor-av{font-size:26px!important}
 
 
 /* ═══════════════════════════════════════════════════════════
-   TEMA YOUNG (6-7 tahun) — High Contrast, Bold, Playful
-   Warna solid kontras tinggi, aman untuk penglihatan anak
+   TEMA YOUNG (6-7 tahun) — Panduan Warna Resmi HeroKu
+   Soft Cream bg, Pure White cards, Bold accents
    ═══════════════════════════════════════════════════════════ */
+
+/* ── Palette Resmi ──
+   Bg Utama:    #FFFDF4 (Soft Cream)
+   Kartu:       #FFFFFF (Pure White)
+   Kuning:      #FFD043 (Ceria Yellow)
+   Hijau:       #A3E3C9 (Playful Mint Green)
+   Biru:        #90D7FF (Sky Blue)
+   Coral:       #E57A55 (Soft Terracotta)
+   Teks Utama:  #1E1B18 (Charcoal Dark Brown)
+   ─────────────────────────────────────────── */
+
 body.theme-young{
+  --young-cream:   #FFFDF4;
+  --young-white:   #FFFFFF;
+  --young-yellow:  #FFD043;
+  --young-mint:    #A3E3C9;
+  --young-sky:     #90D7FF;
+  --young-coral:   #E57A55;
+  --young-text:    #1E1B18;
+  --young-text2:   #5C5650;
   --green:#1B8A3E;--green-dark:#156B30;--green-light:#E8F5EC;
-  --amber:#E07B00;--purple:#6A1B9A;--blue:#0D47A1;--coral:#C62828;
-  --dark:#1A1A1A;--bg:#FFF8E7;--border:#E0A800;
   --font-round:'Varela Round','Comic Sans MS','Trebuchet MS',sans-serif;
 }
 
-body.theme-young{ background:#FFF8E7!important; }
+/* Background utama */
+body.theme-young{ background:#FFFDF4!important; }
+body.theme-young #page-beranda,
+body.theme-young .tab-page{ background:#FFFDF4!important; }
 
-/* Topbar — oranye solid gelap, kontras tinggi */
+/* ── Topbar — Coral warm ── */
 body.theme-young .topbar{
-  background:#E65100!important;
+  background:#E57A55!important;
   border-radius:0 0 20px 20px!important;
+  box-shadow:0 4px 0 #C4603A!important;
 }
-body.theme-young .topbar-name{color:#fff!important;font-size:17px!important;font-weight:900!important}
-body.theme-young .topbar-sub{color:rgba(255,255,255,0.9)!important}
-body.theme-young .topbar-logo{color:#FFE082!important;font-size:22px!important}
+body.theme-young .topbar-name{
+  color:#fff!important;
+  font-size:16px!important;
+  font-weight:900!important;
+}
+body.theme-young .topbar-sub{ color:rgba(255,255,255,0.9)!important; }
+body.theme-young .topbar-logo{ color:#FFD043!important; font-size:22px!important; }
 
-/* Bottom nav */
+/* ── Bottom nav ── */
 body.theme-young .bottom-nav{
   background:#fff!important;
-  border-top:3px solid #E65100!important;
+  border-top:2.5px solid #FFD043!important;
+  box-shadow:0 -2px 8px rgba(255,208,67,0.2)!important;
 }
-body.theme-young .nav-label{color:#757575!important;font-size:11px!important;font-weight:700!important}
-body.theme-young .nav-item.active .nav-label{color:#E65100!important}
-body.theme-young .nav-item.active .nav-icon{color:#E65100!important}
+body.theme-young .nav-label{
+  color:#8A857F!important;
+  font-size:11px!important;
+  font-weight:700!important;
+}
+body.theme-young .nav-item.active .nav-label{ color:#E57A55!important; }
+body.theme-young .nav-item.active .nav-icon{ color:#E57A55!important; }
 
-/* Cards umum */
+/* ── Cards umum ── */
 body.theme-young .card{
+  background:#FFFFFF!important;
   border-radius:20px!important;
-  border:2px solid #E0A800!important;
-  background:#fff!important;
+  border:1.5px solid rgba(229,122,85,0.2)!important;
+  box-shadow:0 3px 12px rgba(0,0,0,0.06)!important;
 }
 
-/* Hero card — oranye solid */
+/* ── Hero card ── */
 body.theme-young .hero{
+  background:linear-gradient(135deg,#E57A55,#FFD043)!important;
   border-radius:24px!important;
-  background:#E65100!important;
   border:none!important;
+  box-shadow:0 5px 0 #C4603A!important;
 }
 body.theme-young .hero-name{
   font-size:26px!important;
   font-weight:900!important;
-  color:#fff!important;
+  color:#1E1B18!important;
 }
 body.theme-young .hstat{
+  background:rgba(255,255,255,0.3)!important;
   border-radius:12px!important;
-  background:rgba(0,0,0,0.2)!important;
 }
 body.theme-young .hstat-num{
-  font-size:24px!important;
+  font-size:22px!important;
   font-weight:900!important;
-  color:#fff!important;
+  color:#1E1B18!important;
 }
 body.theme-young .hstat-label{
-  color:rgba(255,255,255,0.9)!important;
+  color:rgba(30,27,24,0.75)!important;
   font-size:11px!important;
   font-weight:700!important;
 }
 
-/* ── HABIT CARDS — Bold & High Contrast ── */
+/* ── HABIT CARDS ── */
 body.theme-young .habit-card{
+  background:#FFFFFF!important;
+  border-radius:18px!important;
   padding:14px 16px!important;
   margin-bottom:10px!important;
-  background:#fff!important;
-  border-radius:18px!important;
-  border:3px solid #E0A800!important;
-  box-shadow:0 4px 0 #B8860B!important;
+  border:2px solid #FFD043!important;
+  box-shadow:0 4px 0 rgba(255,208,67,0.5), 0 2px 8px rgba(0,0,0,0.06)!important;
+  position:relative!important;
 }
 body.theme-young .habit-card:active{
   transform:translateY(3px)!important;
-  box-shadow:0 1px 0 #B8860B!important;
+  box-shadow:0 1px 0 rgba(255,208,67,0.5)!important;
 }
 body.theme-young .habit-card.checked{
-  background:#E8F5EC!important;
-  border-color:#1B8A3E!important;
-  box-shadow:0 4px 0 #156B30!important;
+  background:#F0FBF6!important;
+  border-color:#A3E3C9!important;
+  box-shadow:0 4px 0 rgba(163,227,201,0.6)!important;
 }
 
-/* Warna border BOLD berbeda tiap habit */
-body.theme-young .habit-card:nth-child(1){border-color:#E65100!important;box-shadow:0 4px 0 #BF360C!important}
-body.theme-young .habit-card:nth-child(2){border-color:#6A1B9A!important;box-shadow:0 4px 0 #4A148C!important}
-body.theme-young .habit-card:nth-child(3){border-color:#0277BD!important;box-shadow:0 4px 0 #01579B!important}
-body.theme-young .habit-card:nth-child(4){border-color:#2E7D32!important;box-shadow:0 4px 0 #1B5E20!important}
-body.theme-young .habit-card:nth-child(5){border-color:#1565C0!important;box-shadow:0 4px 0 #0D47A1!important}
-body.theme-young .habit-card:nth-child(6){border-color:#E07B00!important;box-shadow:0 4px 0 #B35B00!important}
-body.theme-young .habit-card:nth-child(7){border-color:#6A1B9A!important;box-shadow:0 4px 0 #4A148C!important}
+/* Border warna per habit — aksen cerah */
+body.theme-young .habit-card:nth-child(1){border-color:#FFD043!important;box-shadow:0 4px 0 rgba(255,208,67,0.5)!important}
+body.theme-young .habit-card:nth-child(2){border-color:#E57A55!important;box-shadow:0 4px 0 rgba(229,122,85,0.4)!important}
+body.theme-young .habit-card:nth-child(3){border-color:#90D7FF!important;box-shadow:0 4px 0 rgba(144,215,255,0.5)!important}
+body.theme-young .habit-card:nth-child(4){border-color:#A3E3C9!important;box-shadow:0 4px 0 rgba(163,227,201,0.5)!important}
+body.theme-young .habit-card:nth-child(5){border-color:#90D7FF!important;box-shadow:0 4px 0 rgba(144,215,255,0.5)!important}
+body.theme-young .habit-card:nth-child(6){border-color:#FFD043!important;box-shadow:0 4px 0 rgba(255,208,67,0.5)!important}
+body.theme-young .habit-card:nth-child(7){border-color:#E57A55!important;box-shadow:0 4px 0 rgba(229,122,85,0.4)!important}
 
-/* Ikon habit BESAR */
+/* Ikon habit besar */
 body.theme-young .h-icon{
-  width:58px!important;
-  height:58px!important;
-  font-size:30px!important;
+  width:56px!important;
+  height:56px!important;
+  font-size:28px!important;
   border-radius:16px!important;
   flex-shrink:0!important;
 }
 
-/* Nama habit — hitam solid, besar */
+/* Nama habit — Charcoal, besar, tegas */
 body.theme-young .h-name{
   font-size:18px!important;
   font-weight:900!important;
-  color:#1A1A1A!important;
+  color:#1E1B18!important;
   margin-bottom:0!important;
 }
 
@@ -475,38 +508,63 @@ body.theme-young .h-name{
 body.theme-young .h-desc{ display:none!important; }
 body.theme-young .h-reward{ display:none!important; }
 
-/* Tombol centang BESAR */
+/* Tombol centang besar */
 body.theme-young .hchk{
   width:50px!important;
   height:50px!important;
   border-radius:50%!important;
-  border:3px solid #BDBDBD!important;
+  border:3px solid #E0E0E0!important;
+  background:#F5F5F5!important;
   font-size:0!important;
   flex-shrink:0!important;
-  background:#F5F5F5!important;
 }
 body.theme-young .habit-card.checked .hchk{
-  background:#1B8A3E!important;
-  border-color:#156B30!important;
-  font-size:24px!important;
+  background:linear-gradient(135deg,#A3E3C9,#1B8A3E)!important;
+  border-color:#1B8A3E!important;
+  font-size:22px!important;
   color:#fff!important;
 }
 
-/* Mentor/Syekh card */
+/* ── Mentor/Syekh card ── */
 body.theme-young .mentor-card{
-  border:3px solid #6A1B9A!important;
-  box-shadow:0 4px 0 #4A148C!important;
-  background:#fff!important;
+  background:#FFFFFF!important;
+  border:2px solid #90D7FF!important;
+  box-shadow:0 4px 0 rgba(144,215,255,0.5), 0 2px 8px rgba(0,0,0,0.06)!important;
+  border-radius:20px!important;
 }
-
-/* Teks dalam mentor card */
 body.theme-young .mentor-card p,
-body.theme-young .mentor-card .mentor-msg{
-  color:#1A1A1A!important;
+body.theme-young .mentor-card [class*="msg"]{
+  color:#1E1B18!important;
   font-size:14px!important;
+  line-height:1.6!important;
 }
 
-/* Button besar */
+/* ── Sec title ── */
+body.theme-young .sec-title{
+  font-size:18px!important;
+  font-weight:900!important;
+  color:#1E1B18!important;
+}
+
+/* ── XP/Progress bar ── */
+body.theme-young .xp-bar{
+  background:#E8E8E8!important;
+  border-radius:10px!important;
+  height:10px!important;
+}
+body.theme-young .xp-fill{
+  background:linear-gradient(90deg,#90D7FF,#A3E3C9)!important;
+  border-radius:10px!important;
+}
+
+/* ── Streak weekly strip ── */
+body.theme-young [class*="week"]{
+  background:#FFFFFF!important;
+  border:2px solid #FFD043!important;
+  border-radius:16px!important;
+}
+
+/* ── Buttons ── */
 body.theme-young .btn-go,
 body.theme-young .btn-confirm,
 body.theme-young .btn-next{
@@ -514,35 +572,19 @@ body.theme-young .btn-next{
   font-size:16px!important;
   padding:14px!important;
   font-weight:900!important;
+  background:linear-gradient(135deg,#E57A55,#FFD043)!important;
+  color:#1E1B18!important;
+  border:none!important;
 }
 
-/* Nav icons lebih besar */
-body.theme-young .nav-icon{font-size:24px!important}
+/* Nav icons */
+body.theme-young .nav-icon{ font-size:24px!important; }
 
-/* Sec title — warna gelap kontras */
-body.theme-young .sec-title{
-  font-size:18px!important;
-  font-weight:900!important;
-  color:#E65100!important;
-}
-
-/* Streak/weekly tracker */
-body.theme-young .week-strip,
-body.theme-young [class*="week"]{
-  background:#fff!important;
-  border:2px solid #E0A800!important;
-  border-radius:16px!important;
-}
-
-/* Progress bar */
-body.theme-young .xp-bar{ 
-  border-radius:10px!important;
-  height:10px!important;
-  background:#E0E0E0!important;
-}
-body.theme-young .xp-fill{ 
-  background:#E65100!important;
-  border-radius:10px!important;
+/* Teks umum */
+body.theme-young p,
+body.theme-young span,
+body.theme-young div{
+  color:#1E1B18;
 }
 
 /* ───────────────────────────────────────────
