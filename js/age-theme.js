@@ -212,31 +212,181 @@ body[data-theme="light"] textarea {
   border-color: var(--card-border, #DDD) !important;
 }
 
-/* ── YOUNG theme extras (6-7 thn) ── */
+/* ════════════════════════════════════════
+   YOUNG THEME (6-7 thn) — Ceria & Playful
+   ════════════════════════════════════════ */
 body.theme-young {
-  font-size: var(--font-size-base) !important;
+  background: #FFF8E7 !important;
+  font-size: 15px !important;
 }
-body.theme-young .habit-btn,
-body.theme-young .mission-item {
-  padding: 14px !important;
-  border-radius: var(--border-radius) !important;
-  font-size: var(--font-size-base) !important;
+
+/* ── Animasi bintang berkedip ── */
+@keyframes _agt_twinkle {
+  0%,100% { transform: scale(1) rotate(0deg); opacity:1; }
+  50%      { transform: scale(1.2) rotate(10deg); opacity:0.8; }
 }
-/* Sembunyikan elemen yang terlalu kompleks untuk usia 6-7 */
-body.theme-young .xp-bar-wrap,
-body.theme-young #page-garasi,
-body.theme-young [data-hide-young="true"] {
-  display: none !important;
+@keyframes _agt_bounce {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
 }
-/* Tampilkan versi sederhana */
-body.theme-young [data-show-young="true"] {
-  display: block !important;
+@keyframes _agt_wiggle {
+  0%,100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-5deg); }
+  75%      { transform: rotate(5deg); }
 }
-/* Ikon misi lebih besar */
-body.theme-young .habit-icon,
-body.theme-young .mission-icon {
-  font-size: 32px !important;
+
+/* ── Header ── */
+body.theme-young .app-header,
+body.theme-young #app-header {
+  background: linear-gradient(135deg,#FF6B35,#FF9A3C) !important;
+  border-radius: 0 0 24px 24px !important;
+  padding-bottom: 16px !important;
 }
+
+/* ── Tab bar bawah ── */
+body.theme-young .tab-bar,
+body.theme-young #tab-bar {
+  background: #fff !important;
+  border-top: 3px solid #FFE082 !important;
+  border-radius: 20px 20px 0 0 !important;
+}
+body.theme-young .tab-btn { color: #BDBDBD !important; font-size:11px !important; }
+body.theme-young .tab-btn.active { color: #FF6B35 !important; }
+
+/* ── Habit cards — BESAR & BERWARNA ── */
+body.theme-young .habit-card {
+  background: #fff !important;
+  border-radius: 22px !important;
+  padding: 14px 16px !important;
+  margin-bottom: 10px !important;
+  border: 3px solid #FFE082 !important;
+  box-shadow: 0 4px 0 #FFD54F !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  transition: transform .15s !important;
+  cursor: pointer !important;
+}
+body.theme-young .habit-card:active {
+  transform: scale(0.97) translateY(2px) !important;
+  box-shadow: 0 2px 0 #FFD54F !important;
+}
+body.theme-young .habit-card.checked {
+  background: #F1F8E9 !important;
+  border-color: #AED581 !important;
+  box-shadow: 0 4px 0 #9CCC65 !important;
+  opacity: 0.85 !important;
+}
+
+/* Warna border berbeda tiap habit (1-7) */
+body.theme-young .habit-card:nth-child(1) { border-color:#FFB74D !important; box-shadow:0 4px 0 #FFA726 !important; }
+body.theme-young .habit-card:nth-child(2) { border-color:#CE93D8 !important; box-shadow:0 4px 0 #BA68C8 !important; }
+body.theme-young .habit-card:nth-child(3) { border-color:#80DEEA !important; box-shadow:0 4px 0 #26C6DA !important; }
+body.theme-young .habit-card:nth-child(4) { border-color:#A5D6A7 !important; box-shadow:0 4px 0 #66BB6A !important; }
+body.theme-young .habit-card:nth-child(5) { border-color:#90CAF9 !important; box-shadow:0 4px 0 #42A5F5 !important; }
+body.theme-young .habit-card:nth-child(6) { border-color:#FFCC80 !important; box-shadow:0 4px 0 #FFA726 !important; }
+body.theme-young .habit-card:nth-child(7) { border-color:#B39DDB !important; box-shadow:0 4px 0 #7E57C2 !important; }
+
+/* ── Ikon habit lebih besar ── */
+body.theme-young .h-icon {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 18px !important;
+  font-size: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Info text ── */
+body.theme-young .h-name {
+  font-size: 17px !important;
+  font-weight: 900 !important;
+  color: #333 !important;
+}
+body.theme-young .h-desc {
+  font-size: 12px !important;
+  color: #888 !important;
+  margin-top: 2px !important;
+}
+body.theme-young .h-reward {
+  font-size: 12px !important;
+  color: #FF9800 !important;
+  font-weight: 700 !important;
+  margin-top: 4px !important;
+}
+
+/* ── Tombol centang BESAR ── */
+body.theme-young .hchk {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  border: 3px solid #E0E0E0 !important;
+  background: #FAFAFA !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 22px !important;
+  flex-shrink: 0 !important;
+  font-weight: 900 !important;
+  color: #4CAF50 !important;
+}
+body.theme-young .habit-card.checked .hchk {
+  background: #4CAF50 !important;
+  border-color: #4CAF50 !important;
+  color: #fff !important;
+  animation: _agt_bounce 1s ease infinite !important;
+}
+
+/* ── Judul section ── */
+body.theme-young .sec-title,
+body.theme-young [class*="sec-title"] {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  color: #E65100 !important;
+}
+
+/* ── Cards umum ── */
+body.theme-young .card {
+  border-radius: 20px !important;
+  border: 2.5px solid #FFE082 !important;
+  background: #fff !important;
+}
+
+/* ── Nama siswa ── */
+body.theme-young .stu-name,
+body.theme-young #stu-name {
+  font-size: 26px !important;
+  font-weight: 900 !important;
+  color: #E65100 !important;
+  animation: _agt_wiggle 2s ease infinite !important;
+  display: inline-block !important;
+}
+
+/* ── Koin & XP bar ── */
+body.theme-young .koin-val { color: #FF9800 !important; font-size:18px !important; font-weight:900 !important; }
+body.theme-young .xp-bar { border-radius: 20px !important; height: 14px !important; }
+body.theme-young .xp-fill { border-radius: 20px !important; background: linear-gradient(90deg,#FF9A3C,#FF6B35) !important; }
+
+/* ── World/Beranda background ── */
+body.theme-young #page-beranda {
+  background: linear-gradient(180deg,#FFF8E7,#FFF3E0) !important;
+}
+
+/* ── Streak badge ── */
+body.theme-young .streak-badge,
+body.theme-young [class*="streak"] {
+  background: linear-gradient(135deg,#FF6B35,#FF9A3C) !important;
+  color: #fff !important;
+  border-radius: 20px !important;
+  padding: 4px 12px !important;
+  font-weight: 900 !important;
+  animation: _agt_twinkle 2s ease infinite !important;
+}
+
+/* ── Sembunyikan elemen terlalu kompleks ── */
+body.theme-young [data-hide-young="true"] { display: none !important; }
 
 /* ── MID theme extras (8-9 thn) ── */
 body.theme-mid {
