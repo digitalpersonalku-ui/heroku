@@ -228,10 +228,7 @@ body.theme-young {
 }
 
 /* ── Animasi bintang berkedip ── */
-@keyframes _agt_twinkle {
-  0%,100% { transform: scale(1) rotate(0deg); opacity:1; }
-  50%      { transform: scale(1.2) rotate(10deg); opacity:0.8; }
-}
+
 @keyframes _agt_bounce {
   0%,100% { transform: translateY(0); }
   50%      { transform: translateY(-4px); }
@@ -381,15 +378,13 @@ body.theme-young #page-beranda {
   background: linear-gradient(180deg,#FFF8E7,#FFF3E0) !important;
 }
 
-/* ── Streak badge ── */
-body.theme-young .streak-badge,
-body.theme-young [class*="streak"] {
-  background: linear-gradient(135deg,#FF6B35,#FF9A3C) !important;
-  color: #fff !important;
+/* ── Streak badge — hanya badge kecil, bukan row ── */
+body.theme-young .streak-badge {
+  background: linear-gradient(135deg,#E57A55,#FFD043) !important;
+  color: #1E1B18 !important;
   border-radius: 20px !important;
   padding: 4px 12px !important;
   font-weight: 900 !important;
-  animation: _agt_twinkle 2s ease infinite !important;
 }
 
 /* ── SIMPLIFY CARD MISI untuk anak 6-7 tahun ──────────────
